@@ -1,0 +1,56 @@
+/* https://developers.line.biz/ja/docs/line-login/login-button/#design-guidelines */
+.lineLoginButton {
+  padding: var(--protected-area);
+
+  &:hover {
+    --state-layer-opacity: 0.1;
+  }
+
+  &:active {
+    --state-layer-opacity: 0.3;
+  }
+
+  --line-icon-size: 2.5rem;
+  --protected-area: 0.5rem;
+  --state-layer-opacity: 0;
+}
+
+.lineLoginButtonInner {
+  background-color: #06C755;
+  border-radius: 0.5rem;
+  display: grid;
+  min-height: 40px;
+}
+
+.lineLoginButtonStateLayer {
+  grid-area: 1 / 1 / -1 / -1;
+  background-color: rgba(0, 0, 0, var(--state-layer-opacity));
+}
+
+.lineLoginButtonContentLayer {
+  grid-area: 1 / 1 / -1 / -1;
+
+  font-weight: bold;
+  display: flex;
+}
+
+.lineIconContainer {
+  padding-inline: var(--protected-area);
+  display: grid;
+  align-items: center;
+  border-right: 1px solid rgba(0, 0, 0, 8%);
+}
+
+.lineLogo {
+  width: var(--line-icon-size);
+  height: var(--line-icon-size);
+}
+
+.lineLoginButtonLabel {
+  color: #FFFFFF;
+  font-weight: bold;
+  /* ガイドラインでは 11px と書いてるけど小さすぎる */
+  /* font-size: 11px; */
+  padding-inline: var(--line-icon-size);
+  padding-block: calc(var(--line-icon-size) / 2);
+}
