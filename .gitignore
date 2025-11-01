@@ -13,3 +13,4 @@
 .dev.vars*
 worker-configuration.d.ts
 
+/workers/lib/db/drizzle
