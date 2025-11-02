@@ -1,0 +1,36 @@
+:root {
+  --md-typography-label-small-size: 11px;
+  --md-typography-label-small-weight: 500;
+  --md-typography-label-medium-size: 12px;
+  --md-typography-label-medium-weight: 500;
+  --md-typography-label-large-size: 14px;
+  --md-typography-label-large-weight: 500;
+
+  --md-typography-body-small-size: 12px;
+  --md-typography-body-small-weight: 400;
+  --md-typography-body-medium-size: 14px;
+  --md-typography-body-medium-weight: 400;
+  --md-typography-body-large-size: 16px;
+  --md-typography-body-large-weight: 400;
+
+  --md-typography-title-small-size: 14px;
+  --md-typography-title-small-weight: 500;
+  --md-typography-title-medium-size: 16px;
+  --md-typography-title-medium-weight: 500;
+  --md-typography-title-large-size: 22px;
+  --md-typography-title-large-weight: 400;
+
+  --md-typography-headline-small-size: 24px;
+  --md-typography-headline-small-weight: 400;
+  --md-typography-headline-medium-size: 28px;
+  --md-typography-headline-medium-weight: 400;
+  --md-typography-headline-large-size: 32px;
+  --md-typography-headline-large-weight: 400;
+
+  --md-typography-display-small-size: 36px;
+  --md-typography-display-small-weight: 400;
+  --md-typography-display-medium-size: 45px;
+  --md-typography-display-medium-weight: 400;
+  --md-typography-display-large-size: 57px;
+  --md-typography-display-large-weight: 400;
+}
