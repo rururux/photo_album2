@@ -7,10 +7,13 @@
 
 .headerLeading {
   padding-inline: 4px;
+  color: var(--md-color-on-surface);
 }
 
 .headerTitle {
   color: var(--md-color-on-surface);
+  font-size: var(--md-typography-title-large-size);
+  font-weight: var(--md-typography-title-large-weight);
 
   .headerRoot > &:first-child {
     padding-left: 16px;
@@ -20,4 +23,5 @@
 .headerTrailing {
   padding-inline: 4px;
   display: flex;
+  color: var(--md-color-on-surface-variant);
 }
