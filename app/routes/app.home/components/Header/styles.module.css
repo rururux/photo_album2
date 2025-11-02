@@ -1,0 +1,23 @@
+.headerRoot {
+  height: 64px;
+  background-color: var(--md-color-surface);
+  display: flex;
+  align-items: center;
+}
+
+.headerLeading {
+  padding-inline: 4px;
+}
+
+.headerTitle {
+  color: var(--md-color-on-surface);
+
+  .headerRoot > &:first-child {
+    padding-left: 16px;
+  }
+}
+
+.headerTrailing {
+  padding-inline: 4px;
+  display: flex;
+}
