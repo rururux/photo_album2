@@ -1,0 +1,40 @@
+.avatarButton {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  overflow: hidden;
+  position: relative;
+  display: grid;
+  place-items: center;
+
+  &:focus-visible {
+    outline-color: var(--md-color-secondary);
+    outline-width: 3px;
+    outline-offset: 2px;
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    min-width: var(--minimum-target-size);
+    min-height: var(--minimum-target-size);
+
+    --minimum-target-size: 48px;
+  }
+}
+
+.avatarButtonStateLayer, .avatarButtonContentLayer {
+  grid-area: 1 / 1 / -1 / -1;
+}
+
+.avatarButtonStateLayer {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-color: var(--md-color-on-surface);
+  opacity: 0;
+
+  .avatarButton:active > & {
+    opacity: 0.1;
+  }
+}
