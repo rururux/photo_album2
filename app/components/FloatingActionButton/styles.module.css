@@ -1,0 +1,38 @@
+.floatingActionButton {
+  --fab-backgroud-color: var(--md-color-primary);
+  --fab-icon-color: var(--md-color-on-primary);
+  --fab-size: 56px;
+  --icon-size: 24px;
+  --fab-state-layer-background-color: var(--md-color-on-primary);
+
+  width: var(--fab-size);
+  height: var(--fab-size);
+  color: var(--fab-icon-color);
+  background-color: var(--fab-backgroud-color);
+  border-radius: 16px;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+
+  /* TODO: shadow */
+}
+
+.floatingActionButtonStateLayer, .floatingActionButtonContentLayer {
+  grid-area: 1 / 1 / -1 / -1;
+}
+
+.floatingActionButtonStateLayer {
+  width: 100%;
+  height: 100%;
+  background-color: var(--fab-state-layer-background-color);
+  opacity: 0;
+
+  .floatingActionButton:active > & {
+    opacity: 0.1;
+  }
+}
