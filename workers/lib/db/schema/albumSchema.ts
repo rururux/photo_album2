@@ -17,8 +17,9 @@ export const albums = sqliteTable("albums", {
 
 export const photos = sqliteTable("photos", {
   id: int().primaryKey({ autoIncrement: true }),
-  date: int({ mode: "timestamp_ms" }).notNull(),
   albumId: int().notNull(),
+  src: text().notNull(),
+  date: int({ mode: "timestamp_ms" }).notNull(),
   createdAt: int({ mode: "timestamp_ms" })
     .default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
     .notNull(),
