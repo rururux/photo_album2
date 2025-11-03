@@ -1,12 +1,12 @@
 import { mergeProps } from "react-aria"
 import styles from "./styles.module.css"
-import type { HTMLAttributes, MouseEventHandler, RefObject } from "react"
+import type { DialogHTMLAttributes, HTMLAttributes, MouseEventHandler, RefObject } from "react"
 
 export const Dialog = {
   Root, Body, Header, Title, Content, Footer
 }
 
-function Root({ ref, ...props }: HTMLAttributes<HTMLDialogElement> & { ref: RefObject<HTMLDialogElement | null> }) {
+function Root({ ref, ...props }: DialogHTMLAttributes<HTMLDialogElement> & { ref: RefObject<HTMLDialogElement | null> }) {
   const handleClick: MouseEventHandler = e => {
     const currentRef = ref.current
 
