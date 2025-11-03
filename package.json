@@ -10,7 +10,7 @@
     "postinstall": "npm run cf-typegen",
     "preview": "npm run build && vite preview",
     "typecheck": "npm run cf-typegen && react-router typegen && tsc -b",
-    "generate-auth-schema": "pnpx @better-auth/cli@latest generate --config=./workers/lib/auth.ts --output=./workers/lib/db/schema/auth-schema.ts"
+    "generate-auth-schema": "pnpx @better-auth/cli@latest generate --config=./workers/lib/auth.ts --output=./workers/lib/db/schema/authSchema.ts"
   },
   "dependencies": {
     "better-auth": "^1.3.34",

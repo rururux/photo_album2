@@ -1,6 +1,6 @@
 import { initAuth } from "./lib/auth"
 import { createRequestHandler } from "react-router";
-import * as authSchema from "./lib/db/schema/auth-schema"
+import * as authSchema from "./lib/db/schema/authSchema"
 import { drizzle } from "drizzle-orm/d1"
 
 declare module "react-router" {
