@@ -1,6 +1,6 @@
 import { initAuth } from "./lib/auth"
 import { createRequestHandler } from "react-router";
-import * as authSchema from "./lib/db/schema/authSchema"
+import schemas from "./lib/db/schema"
 import { drizzle } from "drizzle-orm/d1"
 
 declare module "react-router" {
@@ -20,7 +20,7 @@ const requestHandler = createRequestHandler(
 );
 
 function initDrizzle(d1: D1Database) {
-  return drizzle(d1, { schema: { ...authSchema } })
+  return drizzle(d1, { schema: schemas })
 }
 
 export default {
