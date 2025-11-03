@@ -1,8 +1,6 @@
 .avatarButton {
   width: 40px;
   height: 40px;
-  border-radius: 50%;
-  overflow: hidden;
   position: relative;
   display: grid;
   place-items: center;
@@ -37,4 +35,9 @@
   .avatarButton:active > & {
     opacity: 0.1;
   }
+}
+
+.avatarButtonContentLayer {
+  border-radius: 50%;
+  overflow: hidden;
 }
