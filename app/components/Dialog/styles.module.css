@@ -1,0 +1,32 @@
+.dialogRoot {
+  min-width: 280px;
+  max-width: 560px;
+  background-color: var(--md-color-surface-container-high);
+  border-radius: 28px;
+  place-self: center;
+
+  &::backdrop {
+    background-color: var(--md-color-scrim);
+  }
+}
+
+.dialogBody {
+  padding: 24px;
+}
+
+.dialogTitle {
+  color: var(--md-color-on-surface);
+  font-size: var(--md-typography-headline-small-size);
+  font-weight: var(--md-typography-headline-small-weight);
+}
+
+.dialogContent {
+  margin-top: 16px;
+}
+
+.dialogFooter {
+  margin-top: 24px;
+  display: flex;
+  justify-content: end;
+  gap: 4px;
+}
