@@ -1,0 +1,72 @@
+.button {
+  height: var(--button-size);
+  position: relative;
+  display: grid;
+  place-items: center;
+
+  font-size: var(--button-label-size);
+  font-weight: var(--button-label-weight);
+  color: var(--button-label-color);
+  background-color: var(--button-background-color);
+  border-radius: var(--button-corner-size);
+
+  &[disabled] {
+    color: rgb(from var(--button-label-color) r g b / 0.38);
+    background-color: rgb(from var(--button-background-color) r g b / 0.1);
+  }
+
+  &:focus-visible {
+    outline: 3px solid var(--md-color-secondary);
+    outline-offset: 2px;
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    height: 100%;
+    min-height: 48px;
+    width: 100%;
+    min-width: 48px;
+  }
+}
+
+.buttonStateLayer {
+  width: 100%;
+  height: 100%;
+  border-radius: var(--button-corner-size);
+  background-color: var(--button-state-layer-color);
+  opacity: 0;
+
+  .button:active:not([disabled]) > & {
+    opacity: 0.1;
+  }
+}
+
+.buttonContentLayer {
+  padding-inline: var(--button-inline-padding);
+}
+
+.buttonStateLayer, .buttonContentLayer {
+  grid-area: 1 / 1 / -1 / -1;
+}
+
+/* Size */
+.buttonSmall {
+  --button-size: 40px;
+  --button-inline-padding: 16px;
+  --button-corner-size: 12px;
+  --button-label-size: var(--md-typography-label-large-size);
+  --button-label-weight: var(--md-typography-label-large-weight);
+}
+
+/* Variant */
+.buttonText {
+  --button-background-color: unset;
+  --button-label-color: var(--md-color-primary);
+  --button-state-layer-color: var(--md-color-primary);
+
+  &[disabled] {
+    --button-label-color: var(--md-color-on-surface);
+    --button-background-color: var(--md-color-on-surface);
+  }
+}
