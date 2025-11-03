@@ -14,6 +14,7 @@
   color: var(--md-color-on-surface);
   font-size: var(--md-typography-title-large-size);
   font-weight: var(--md-typography-title-large-weight);
+  flex-grow: 1;
 
   .headerRoot > &:first-child {
     padding-left: 16px;
