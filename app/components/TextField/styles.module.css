@@ -1,0 +1,100 @@
+.textField {
+  /* min-height: 56px; */
+  grid-template-rows: 56px;
+  /* padding-inline: 16px; */
+  display: grid;
+  align-items: center;
+  position: relative;
+  cursor: text;
+
+  &::before {
+    content: "";
+    background-color: var(--md-color-surface-container-highest);
+    height: 100%;
+  }
+}
+
+.textFieldLabel {
+  color: var(--md-color-on-surface-variant);
+  font-size: var(--md-typography-body-large-size);
+  font-weight: var(--md-typography-body-large-weight);
+  position: absolute;
+  display: flex;
+  align-items: center;
+  height: calc(100% - 16px);
+  left: 16px;
+  top: 8px;
+  cursor: text;
+
+  transition-property: font-size, height;
+  transition-duration: 200ms;
+  transition-timing-function: ease;
+
+  .textField:focus-within > & {
+    height: 1lh;
+    font-size: var(--md-typography-body-small-size);
+    font-weight: var(--md-typography-body-small-weight);
+  }
+
+  &:has(+ .textFieldInput:not(:placeholder-shown)) {
+    height: 1lh;
+    font-size: var(--md-typography-body-small-size);
+    font-weight: var(--md-typography-body-small-weight);
+  }
+
+  &:has(~ .textFieldErrorText) {
+    color: var(--md-color-error);
+  }
+}
+
+.textFieldInput {
+  position: absolute;
+  bottom: 8px;
+  left: 16px;
+  width: calc(100% - 32px);
+  outline: none;
+  color: var(--md-color-on-surface);
+  font-size: var(--md-typography-body-large-size);
+  font-weight: var(--md-typography-body-large-weight);
+  caret-color: var(--md-color-primary);
+
+  &:has(~ .textFieldErrorText) {
+    caret-color: var(--md-color-error);
+  }
+}
+
+.textFieldIndicator {
+  position: absolute;
+  width: 100%;
+  bottom: 0px;
+  border-color: var(--md-color-primary);
+
+  .textField:focus-within > & {
+    border-top-width: 2px;
+  }
+
+  &:has(+ .textFieldErrorText) {
+    border-color: var(--md-color-error);
+  }
+}
+
+.textFieldSupportingText {
+  color: var(--md-color-on-surface-variant);
+}
+
+.textFieldErrorText {
+  color: var(--md-color-error);
+}
+
+/* なぜこんなことをするのか: API を維持したままで Material Design を再現する為 */
+.textField::before, .textFieldLabel, .textFieldInput, .textFieldIndicator {
+  grid-row: 1 / 2;
+}
+
+.textFieldSupportingText, .textFieldErrorText {
+  grid-row: 2 / 3;
+  font-size: var(--md-typography-body-small-size);
+  font-weight: var(--md-typography-body-small-weight);
+  padding-top: 4px;
+  padding-inline: 16px;
+}
