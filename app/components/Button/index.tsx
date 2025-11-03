@@ -5,7 +5,7 @@ import capitalize from "~/utils/capitalize"
 
 type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   size?: "small",
-  variant?: "text"
+  variant?: "text" | "filled" | "outlined"
 }
 
 export function Button({ size = "small", variant = "text", children, ...props }: ButtonProps) {

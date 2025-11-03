@@ -2,6 +2,7 @@
   height: var(--button-size);
   position: relative;
   display: grid;
+  width: fit-content;
   place-items: center;
 
   font-size: var(--button-label-size);
@@ -69,4 +70,17 @@
     --button-label-color: var(--md-color-on-surface);
     --button-background-color: var(--md-color-on-surface);
   }
+}
+
+.buttonFilled {
+  --button-background-color: var(--md-color-primary);
+  --button-label-color: var(--md-color-on-primary);
+  --button-state-layer-color: var(--md-color-on-primary);
+}
+
+.buttonOutlined {
+  --button-background-color: unset;
+  --button-label-color: var(--md-color-on-surface-variant);
+  --button-state-layer-color: var(--md-color-on-surface-variant);
+  border: 1px solid var(--md-color-outline-variant);
 }
