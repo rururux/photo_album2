@@ -10,7 +10,9 @@
     "postinstall": "npm run cf-typegen",
     "preview": "npm run build && vite preview",
     "typecheck": "npm run cf-typegen && react-router typegen && tsc -b",
-    "generate-auth-schema": "pnpx @better-auth/cli@latest generate --config=./workers/lib/auth.ts --output=./workers/lib/db/schema/authSchema.ts"
+    "generate-auth-schema": "pnpx @better-auth/cli@latest generate --config=./workers/lib/auth.ts --output=./workers/lib/db/schema/authSchema.ts",
+    "drizzle-generate": "drizzle-kit generate",
+    "wrangler-migrate": "wrangler d1 migrations apply my_album --local"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
