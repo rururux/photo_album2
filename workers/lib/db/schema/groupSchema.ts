@@ -8,7 +8,7 @@ export const groups = sqliteTable("groups", {
 
 export const usersToGroups = sqliteTable("users_to_groups",
   {
-    userId: int().notNull().references(() => user.id),
+    userId: text().notNull().references(() => user.id),
     groupId: int().notNull().references(() => groups.id)
   },
   t => [ primaryKey({ columns: [ t.userId, t.groupId ] }) ]

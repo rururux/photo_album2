@@ -20,7 +20,7 @@ const requestHandler = createRequestHandler(
 );
 
 function initDrizzle(d1: D1Database) {
-  return drizzle(d1, { schema: schemas })
+  return drizzle(d1, { schema: schemas, casing: "snake_case" })
 }
 
 export default {
