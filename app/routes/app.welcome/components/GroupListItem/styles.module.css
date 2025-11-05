@@ -1,0 +1,35 @@
+.groupListItem {
+  height: 72px;
+  border: 1px solid var(--md-color-outline-variant);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.groupListItemBody {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  gap: 8px;
+}
+
+.groupListItemThumb {
+  aspect-ratio: 1 / 1;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.groupListItemContent {
+  flex-grow: 1;
+  align-items: start;
+  align-self: center;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.groupListItemUserIcon {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  overflow: hidden;
+}
