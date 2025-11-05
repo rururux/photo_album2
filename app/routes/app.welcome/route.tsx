@@ -12,6 +12,7 @@ import styles from "./styles.module.css"
 import { CreateGroupDialog } from "./components/CreateGroupDialog"
 import { CreateGroupFormSchema, RouteActionSchema } from "./schema"
 import { UserSchema } from "~/lib/schema"
+import { AlbumApi } from "~/lib/api"
 
 export async function loader({ request, context }: Route.LoaderArgs) {
   const session = await context.auth.api.getSession({ headers: request.headers })
@@ -56,6 +57,8 @@ export async function action({ request, context }: Route.ActionArgs) {
     return redirect("/login")
   }
 
+  const albumApi = new AlbumApi(context.db)
+
   switch (request.method) {
     case "POST": {
       const requestData = await request.json()
@@ -71,8 +74,21 @@ export async function action({ request, context }: Route.ActionArgs) {
 
         await context.db.insert(schemas.usersToGroups).values({ userId: session.user.id, groupId: newGroup.id })
       } else if (parseResult.output.action === "setDefaultGroup") {
-        // TODO
-        console.log("TODO")
+        const newDefaultGroupId = parseResult.output.groupId
+        const isGroupMember = await albumApi.isGroupMember(session.user.id, newDefaultGroupId)
+
+        if (!isGroupMember) {
+          // TODO: Error Message
+          return
+        }
+
+        const { headers } = await context.auth.api.updateUser({
+          headers: request.headers,
+          body: { defaultGroup: newDefaultGroupId },
+          returnHeaders: true
+        })
+
+        return redirect("/app/home", { headers })
       }
 
       break;
