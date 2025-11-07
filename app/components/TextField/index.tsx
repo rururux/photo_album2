@@ -2,6 +2,7 @@ import { createContext, useContext, useId, type HTMLAttributes, type InputHTMLAt
 import { mergeProps, useObjectRef } from "react-aria"
 import { useController, type Control, type ControllerRenderProps, type FieldValues } from "react-hook-form"
 import styles from "./styles.module.css"
+import capitalize from "~/utils/capitalize"
 
 export const TextField = {
   Root, Label, Input, SupportingText, ErrorText
@@ -24,15 +25,16 @@ const TextFieldContext = createContext<{
 type TextFieldRootProps<T extends { [x: string]: string }> = HTMLAttributes<HTMLDivElement> & {
   control: Control<T>,
   name: string,
-  required?: boolean
+  required?: boolean,
+  variant?: "filled" | "outlined"
 }
 
-function Root<T extends FieldValues>({ control, name, required, children, ...props }: TextFieldRootProps<T>) {
+function Root<T extends FieldValues>({ control, name, required, variant = "filled", children, ...props }: TextFieldRootProps<T>) {
   const inputId = useId()
   // @ts-expect-error UGHHH
   const { field: { ref, ...inputProps }, fieldState: { error: fieldError } } = useController<T>({ name, control, defaultValue: "" })
   const inputRef = useObjectRef(ref)
-  const mergedProps = mergeProps({ className: styles.textField, onClick: () => inputRef.current?.focus() }, props)
+  const mergedProps = mergeProps({ className: [ styles.textField, styles[`textField${capitalize(variant)}`] ].join(" "), onClick: () => inputRef.current?.focus() }, props)
   const errorMessage = fieldError?.message ?? null
 
   return (

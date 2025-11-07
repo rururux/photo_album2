@@ -6,12 +6,6 @@
   align-items: center;
   position: relative;
   cursor: text;
-
-  &::before {
-    content: "";
-    background-color: var(--md-color-surface-container-highest);
-    height: 100%;
-  }
 }
 
 .textFieldLabel {
@@ -21,23 +15,13 @@
   position: absolute;
   display: flex;
   align-items: center;
-  height: calc(100% - 16px);
-  left: 16px;
-  top: 8px;
   cursor: text;
 
-  transition-property: font-size, height;
+  transition-property: font-size, height, top;
   transition-duration: 200ms;
   transition-timing-function: ease;
 
-  .textField:focus-within > & {
-    height: 1lh;
-    font-size: var(--md-typography-body-small-size);
-    font-weight: var(--md-typography-body-small-weight);
-  }
-
-  &:has(+ .textFieldInput:not(:placeholder-shown)) {
-    height: 1lh;
+  .textField:focus-within > &, &:has(+ .textFieldInput:not(:placeholder-shown)) {
     font-size: var(--md-typography-body-small-size);
     font-weight: var(--md-typography-body-small-weight);
   }
@@ -48,10 +32,8 @@
 }
 
 .textFieldInput {
-  position: absolute;
-  bottom: 8px;
-  left: 16px;
-  width: calc(100% - 32px);
+  padding-inline: 16px;
+  width: 100%;
   outline: none;
   color: var(--md-color-on-surface);
   font-size: var(--md-typography-body-large-size);
@@ -97,4 +79,62 @@
   font-weight: var(--md-typography-body-small-weight);
   padding-top: 4px;
   padding-inline: 16px;
+}
+
+.textFieldFilled {
+  &::before {
+    content: "";
+    background-color: var(--md-color-surface-container-highest);
+    height: 100%;
+  }
+
+  & > .textFieldInput {
+    position: absolute;
+    bottom: 8px;
+  }
+
+  & > .textFieldLabel {
+    height: calc(100% - 16px);
+    top: 8px;
+    left: 16px;
+
+    .textField:focus-within > & {
+      height: 1lh;
+    }
+
+    &:has(+ .textFieldInput:not(:placeholder-shown)) {
+      height: 1lh;
+      font-size: var(--md-typography-body-small-size);
+      font-weight: var(--md-typography-body-small-weight);
+    }
+  }
+}
+
+.textFieldOutlined {
+  outline: 1px solid var(--md-color-outline);
+  border-radius: 4px;
+
+  &:focus-within {
+    outline: 3px solid var(--md-color-primary);
+  }
+
+  &::before, .textFieldInput {
+    grid-column: 1 / -1;
+  }
+
+  & > .textFieldLabel {
+    height: auto;
+    background-color: var(--current-background-color);
+    padding-inline: 4px;
+    top: 16px;
+    left: calc(16px - 4px);
+
+    .textField:focus-within > &, &:has(+ .textFieldInput:not(:placeholder-shown)) {
+      top: calc(0px - 0.5lh);
+    }
+  }
+
+  & > .textFieldIndicator {
+    display: none;
+  }
 }
