@@ -26,7 +26,7 @@
     font-weight: var(--md-typography-body-small-weight);
   }
 
-  &:has(~ .textFieldErrorText) {
+  .textField[aria-invalid] > & {
     color: var(--md-color-error);
   }
 }
@@ -40,7 +40,7 @@
   font-weight: var(--md-typography-body-large-weight);
   caret-color: var(--md-color-primary);
 
-  &:has(~ .textFieldErrorText) {
+  &[aria-invalid], &:has(~ .textFieldErrorText) {
     caret-color: var(--md-color-error);
   }
 }
@@ -55,7 +55,7 @@
     border-top-width: 2px;
   }
 
-  &:has(+ .textFieldErrorText) {
+  .textField[aria-invalid] > & {
     border-color: var(--md-color-error);
   }
 }
@@ -111,11 +111,22 @@
 }
 
 .textFieldOutlined {
-  outline: 1px solid var(--md-color-outline);
-  border-radius: 4px;
+  outline: none;
 
-  &:focus-within {
+  &::before {
+    content: "";
+    outline: 1px solid var(--md-color-outline);
+    border-radius: 4px;
+    height: 100%;
+  }
+
+  &:focus-within::before {
     outline: 3px solid var(--md-color-primary);
+    outline-offset: -1.5px;
+  }
+
+  &[aria-invalid]::before {
+    outline-color: var(--md-color-error);
   }
 
   &::before, .textFieldInput {

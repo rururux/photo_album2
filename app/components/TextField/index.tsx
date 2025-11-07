@@ -1,4 +1,4 @@
-import { createContext, useContext, useId, type HTMLAttributes, type InputHTMLAttributes, type RefObject } from "react"
+import { createContext, useContext, useEffect, useId, type HTMLAttributes, type InputHTMLAttributes, type RefObject } from "react"
 import { mergeProps, useObjectRef } from "react-aria"
 import { useController, type Control, type ControllerRenderProps, type FieldValues } from "react-hook-form"
 import styles from "./styles.module.css"
@@ -13,12 +13,14 @@ const TextFieldContext = createContext<{
   inputId: string,
   inputRef: RefObject<HTMLInputElement | null>,
   inputProps: Omit<ControllerRenderProps<FieldValues, string>, "ref">,
+  invalid: boolean,
   errorMessage: string | null
 }>({
   control: null!,
   inputId: "",
   inputRef: { current: null },
   inputProps: null!,
+  invalid: false,
   errorMessage: null
 })
 
@@ -36,11 +38,12 @@ function Root<T extends FieldValues>({ control, name, required, variant = "fille
   const inputRef = useObjectRef(ref)
   const mergedProps = mergeProps({ className: [ styles.textField, styles[`textField${capitalize(variant)}`] ].join(" "), onClick: () => inputRef.current?.focus() }, props)
   const errorMessage = fieldError?.message ?? null
+  const invalid = errorMessage !== null
 
   return (
     // @ts-expect-error UGHHHHHHH
-    <TextFieldContext value={{ control, inputId, inputRef, inputProps, errorMessage }}>
-      <div {...mergedProps}>
+    <TextFieldContext value={{ control, inputId, inputRef, inputProps, invalid, errorMessage }}>
+      <div {...mergedProps} aria-invalid={invalid || undefined}>
         {children}
       </div>
     </TextFieldContext>
@@ -57,12 +60,12 @@ function Label(props: Omit<HTMLAttributes<HTMLLabelElement>, "htmlFor">) {
 }
 
 function Input(props: InputHTMLAttributes<HTMLInputElement>) {
-  const { inputId, inputProps, inputRef } = useContext(TextFieldContext)
+  const { inputId, inputProps, inputRef, invalid } = useContext(TextFieldContext)
   const mergedProps = mergeProps({ id: inputId, className: styles.textFieldInput }, inputProps, props)
 
   return (
     <>
-      <input {...mergedProps} placeholder="" ref={inputRef} />
+      <input {...mergedProps} placeholder="" aria-invalid={invalid || undefined} ref={inputRef} />
       <hr className={styles.textFieldIndicator} />
     </>
   )
