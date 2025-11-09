@@ -1,0 +1,151 @@
+.rangeCalendarRoot {
+  width: 100%;
+  height: 100dvh;
+  max-width: unset;
+  max-height: unset;
+}
+
+.rangeCalendarHeader {
+  padding-top: 12px;
+}
+
+.rangeCalendarHeaderButtons {
+  height: 48px;
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-columns: 48px auto;
+  place-items: center;
+  justify-content: space-between;
+}
+
+.rangeCalendarHeaderTitles {
+  padding-left: calc(48px + 16px);
+  padding-bottom: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.rangeCalendarHeaderTitlesSupportingText {
+  color: var(--md-color-on-surface-variant);
+  font-size: var(--md-typography-label-large-size);
+  font-weight: var(--md-typography-label-large-weight);
+}
+
+.rangeCalendarHeaderTitlesHeadline {
+  color: var(--md-color-on-surface);
+  font-size: var(--md-typography-title-large-size);
+  font-weight: var(--md-typography-title-large-weight);
+}
+
+.rangeCalendarDialogBody {
+  height: 100%;
+  display: grid;
+}
+
+.rangeCalendarWeekDays {
+  height: 48px;
+  padding-inline: 12px;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  place-items: center;
+}
+
+.rangeCalendarTableList {
+  overflow: scroll;
+}
+
+.rangeCalendarBody {
+  padding-inline: 12px;
+  padding-block: 16px 4px;
+  position: relative;
+}
+
+.rangeCalendarTable {
+  width: 100%;
+  height: calc(48px * 6);
+}
+
+.rangeCalendarMonthSubhead {
+  padding-bottom: 12px;
+  padding-inline: 24px;
+  color: var(--md-color-on-surface-variant);
+  font-size: var(--md-typography-title-small-size);
+  font-weight: var(--md-typography-title-small-weight);
+}
+
+.rangeCalendarTableRow {
+  anchor-scope: --calendar-range-start, --calendar-range-end;
+
+  &:has(> td > [data-selected]:not([data-outside-month]))::after {
+    content: "";
+    position: absolute;
+    height: 40px;
+    margin-block: 4px;
+    background-color: var(--md-color-secondary-container);
+
+    left: calc(anchor(--calendar-range-start left, -4px) + 4px);
+    right: calc(anchor(--calendar-range-end right, -4px) + 4px);
+    z-index: -1;
+  }
+
+  &:has(> td > [data-selection-start]:not([data-outside-month]))::after {
+    border-top-left-radius: 99999px;
+    border-bottom-left-radius: 99999px;
+  }
+
+  &:has(> td > [data-selection-end]:not([data-outside-month]))::after {
+    border-top-right-radius: 99999px;
+    border-bottom-right-radius: 99999px;
+  }
+}
+
+.rangeCalendarTableRowSpacer {
+  height: 48px;
+}
+
+.rangeCalendarTableCell {
+  width: 48px;
+  height: 48px;
+  margin-inline: auto;
+  display: grid;
+  place-items: center;
+
+  &[data-outside-month] {
+    visibility: hidden;
+  }
+
+  &:not([data-outside-month]) {
+    &[data-selection-start] {
+      anchor-name: --calendar-range-start;
+    }
+
+    &[data-selection-end] {
+      anchor-name: --calendar-range-end;
+    }
+
+    &[data-selection-start][data-selection-end] {
+      anchor-name: --calendar-range-start, --calendar-range-end;
+    }
+  }
+}
+
+.rangeCalendarTableCellDay {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+
+  .rangeCalendarTableCell:is([data-selection-start], [data-selection-end]) > & {
+    color: var(--md-color-on-primary);
+    background-color: var(--md-color-primary);
+    border-radius: 50%;
+  }
+}
+
+.rangeCalendarFooter {
+  padding-inline: 12px;
+  padding-block: 8px 36px;
+  display: flex;
+  justify-content: end;
+}
