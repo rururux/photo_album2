@@ -1,0 +1,82 @@
+.iconButton {
+  width: var(--icon-button-size, 40px);
+  height: var(--icon-button-size, 40px);
+  position: relative;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  /* hidden にしてしまうと --icon-button-size < --minimum-target-size の時にターゲットエリアが切り取られてしまう */
+  /* overflow: hidden; */
+  cursor: pointer;
+
+  &:focus-visible {
+    outline-color: var(--md-color-secondary);
+    outline-width: 3px;
+    outline-offset: 2px;
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    min-width: var(--minimum-target-size);
+    min-height: var(--minimum-target-size);
+
+    --minimum-target-size: 48px;
+  }
+}
+
+.iconButtonStateLayer, .iconButtonContentLayer {
+  grid-area: 1 / 1 / -1 / -1;
+}
+
+.iconButtonStateLayer {
+  width: 100%;
+  height: 100%;
+  /* 上記の理由の為、overflow: hidden; が使えないのでこちらでも border-radius を設定する */
+  border-radius: 50%;
+  background-color: var(--icon-button-state-layer-background-color);
+  opacity: 0;
+
+  .iconButton:active > & {
+    opacity: 0.1;
+  }
+}
+
+.iconButtonContentLayer {
+  width: 100%;
+  height: 100%;
+  color: var(--icon-button-color);
+  background-color: var(--icon-button-background-color);
+  border: var(--icon-button-border);
+  border-radius: 50%;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+}
+
+/* size */
+
+.iconButtonSmall {
+  --icon-size: 24px;
+  --icon-button-size: 40px;
+}
+
+.iconButtonMedium {
+  --icon-size: 24px;
+  --icon-button-size: 56px;
+}
+
+/* variant */
+
+.iconButtonStandard {
+  --icon-button-color: var(--md-color-on-surface-variant);
+  --icon-button-background-color: unset;
+  --icon-button-state-layer-background-color: var(--md-color-on-surface-variant);
+}
+
+.iconButtonOutlined {
+  --icon-button-color: var(--md-color-on-surface-variant);
+  --icon-button-background-color: unset;
+  --icon-button-state-layer-background-color: var(--md-color-on-surface-variant);
+  --icon-button-border: 1px solid var(--md-color-outline-variant);
+}
