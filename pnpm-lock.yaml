@@ -66,6 +66,9 @@ importers:
       '@tailwindcss/vite':
         specifier: ^4.1.13
         version: 4.1.16(vite@7.1.12(@types/node@22.18.13)(jiti@2.6.1)(lightningcss@1.30.2))
+      '@types/dom-close-watcher':
+        specifier: ^1.0.0
+        version: 1.0.0
       '@types/node':
         specifier: ^22
         version: 22.18.13
@@ -1848,6 +1851,9 @@ packages:
 
   '@tanstack/virtual-core@3.13.12':
     resolution: {integrity: sha512-1YBOJfRHV4sXUmWsFSf5rQor4Ss82G8dQWLRbnk3GA4jeP8hQt1hxXh0tmflpC0dz3VgEv/1+qwPyLeWkQuPFA==}
+
+  '@types/dom-close-watcher@1.0.0':
+    resolution: {integrity: sha512-7pL0By56sVVGMSJ3HdSY+u08Id0ljStCaf1VnGFxwfpuNdA0HMz0sl2J24eSi9M6ptl9ySkVK35jF75Fn8trUg==}
 
   '@types/estree@1.0.8':
     resolution: {integrity: sha512-dWHzHa2WqEXI/O1E9OjrocMTKJl2mSrEolh1Iomrv6U+JuNwaHXsXx9bLu5gG7BUWFIN0skIQJQ/L1rIex4X6w==}
@@ -4911,6 +4917,8 @@ snapshots:
       react-dom: 19.2.0(react@19.2.0)
 
   '@tanstack/virtual-core@3.13.12': {}
+
+  '@types/dom-close-watcher@1.0.0': {}
 
   '@types/estree@1.0.8': {}
 
