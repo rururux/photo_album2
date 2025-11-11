@@ -1,0 +1,37 @@
+.albumCard {
+  border: 1px solid var(--md-color-outline-variant);
+  border-radius: 12px;
+  background-color: var(--md-color-surface);
+  position: relative;
+  overflow: hidden;
+}
+
+.albumCardLink {
+  position: absolute;
+  inset: 0;
+}
+
+.albumCardThumbnails {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.albumCardContent {
+  padding: 1rem;
+}
+
+.albumCardDateChip {
+  display: inline-block;
+  border-radius: 8px;
+  color: var(--md-color-on-primary);
+  background-color: var(--md-color-primary);
+  padding: 4px 10px;
+
+  font-size: var(--md-typography-body-small-size);
+  font-weight: var(--md-typography-body-small-weight);
+}
+
+.albumCardTitle {
+  font-size: var(--md-typography-display-small-size);
+  font-weight: var(--md-typography-display-small-weight);
+}
