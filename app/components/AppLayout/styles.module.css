@@ -1,0 +1,9 @@
+.layoutBackground {
+  background-color: rgb(from black r g b / 0.6);
+}
+
+.layoutBody {
+  max-width: 450px;
+  margin-inline: auto;
+  background-color: var(--md-color-background);
+}
