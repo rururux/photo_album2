@@ -11,7 +11,13 @@
 			"binding": "DB",
 			"database_name": "my_album",
 			"database_id": "8c17a41a-33e3-46b5-83f1-420213e8a2d2",
-       "migrations_dir": "./workers/lib/db/drizzle"
+			"migrations_dir": "./workers/lib/db/drizzle"
+		}
+	],
+	"r2_buckets": [
+		{
+			"binding": "BUCKET",
+			"bucket_name": "photo-album"
 		}
 	]
 }
