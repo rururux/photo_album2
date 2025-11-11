@@ -18,6 +18,12 @@
   overflow: hidden;
 }
 
+.groupListItemThumbImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 .groupListItemContent {
   flex-grow: 1;
   align-items: start;
@@ -30,6 +36,4 @@
 .groupListItemUserIcon {
   width: 24px;
   height: 24px;
-  border-radius: 50%;
-  overflow: hidden;
 }

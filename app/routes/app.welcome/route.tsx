@@ -13,12 +13,15 @@ import { CreateGroupDialog } from "./components/CreateGroupDialog"
 import { CreateGroupFormSchema, RouteActionSchema } from "./schema"
 import { UserSchema } from "~/lib/schema"
 import { AlbumApi } from "~/lib/api"
+import { Avatar } from "~/components/Avatar"
 
 export async function loader({ request, context }: Route.LoaderArgs) {
   const session = await context.auth.api.getSession({ headers: request.headers })
 
   if (!session) {
     return redirect("/login")
+  } else if (typeof session.user.defaultGroup === "number") {
+    return redirect("/app/home")
   }
 
   const usersToGroups = await context.db.query.usersToGroups.findMany({
@@ -117,7 +120,7 @@ export default function Welcome({ loaderData }: Route.ComponentProps) {
       <Header.Root>
         <Header.Title className={styles.welcomeHeader}>
           <span>ようこそ、</span>
-          <img className={styles.userIcon} src={loaderData.user.image ?? ""} alt="" />
+          <Avatar className={styles.userIcon} name={loaderData.user.name} image={loaderData.user.image} />
           <span>{loaderData.user.name}さん</span>
         </Header.Title>
       </Header.Root>

@@ -1,14 +1,12 @@
 .welcomeHeader {
   display: flex;
   align-items: center;
+  gap: 4px;
 }
 
 .userIcon {
-  margin-inline: 4px;
   width: 32px;
   height: 32px;
-  border-radius: 50%;
-  overflow: hidden;
 }
 
 .groupList {

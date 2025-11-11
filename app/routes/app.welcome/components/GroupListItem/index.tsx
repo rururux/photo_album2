@@ -1,6 +1,7 @@
 import { DummyImage } from "~/components/DummyImage"
 import styles from "./styles.module.css"
 import type { UserSchemaType } from "~/lib/schema"
+import { Avatar } from "~/components/Avatar"
 
 export function GroupListItem({ thumbSrc, name, users, onClick }:{
   thumbSrc: string | null, name: string, users: UserSchemaType[], onClick: VoidFunction
@@ -10,7 +11,7 @@ export function GroupListItem({ thumbSrc, name, users, onClick }:{
       <button className={styles.groupListItemBody} type="button" onClick={onClick}>
         <div className={styles.groupListItemThumb}>
           {thumbSrc? (
-            <img src={thumbSrc} alt="" />
+            <img className={styles.groupListItemThumbImage} src={thumbSrc} alt="" />
           ) : (
             <DummyImage />
           )}
@@ -21,7 +22,7 @@ export function GroupListItem({ thumbSrc, name, users, onClick }:{
           </div>
           <div>
             {users.map(user => (
-              <img className={styles.groupListItemUserIcon} src={user.image} alt={user.name} key={user.id} />
+              <Avatar className={styles.groupListItemUserIcon} name={user.name} image={user.image} key={user.id} />
             ))}
           </div>
         </div>
