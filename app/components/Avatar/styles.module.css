@@ -1,0 +1,15 @@
+.avatarRoot {
+  color: var(--md-color-on-primary);
+  background-color: var(--md-color-primary);
+  border-radius: 50%;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+}
+
+@layer components {
+  .avatarRoot {
+    width: 40px;
+    height: 40px;
+  }
+}
