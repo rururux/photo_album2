@@ -2,6 +2,7 @@ import type { AppLoadContext, EntryContext } from "react-router";
 import { ServerRouter } from "react-router";
 import { isbot } from "isbot";
 import { renderToReadableStream } from "react-dom/server";
+import { getLocalizationScript } from "react-aria-components/i18n"
 
 export default async function handleRequest(
   request: Request,
@@ -16,6 +17,7 @@ export default async function handleRequest(
   const body = await renderToReadableStream(
     <ServerRouter context={routerContext} url={request.url} />,
     {
+      bootstrapScriptContent: getLocalizationScript("ja-JP"),
       onError(error: unknown) {
         responseStatusCode = 500;
         // Log streaming rendering errors from inside the shell.  Don't log

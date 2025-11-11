@@ -9,7 +9,7 @@ import formatRelativeDate from "~/utils/formatRelativeDate"
 import now from "~/utils/now"
 import isSameYear from "~/utils/isSameYear"
 import { CalendarCell, CalendarGrid, RangeCalendarStateContext, RangeCalendar as RARangeCalendar, type CalendarGridBodyProps, type DateRange } from "react-aria-components"
-import { CalendarDate, endOfMonth, parseDate, startOfMonth, type DateDuration } from "@internationalized/date"
+import { CalendarDate, endOfMonth, GregorianCalendar, parseDate, startOfMonth, type CalendarIdentifier, type DateDuration } from "@internationalized/date"
 import { filterDOMProps } from "@react-aria/utils"
 
 const fiveYearMonths = 5 * 12
@@ -20,6 +20,15 @@ const visibleDuration = { months: fiveYearMonths + 1 }
 
 // → "YYYY年MM月"
 const dateFormatter = new Intl.DateTimeFormat("ja", { year: "numeric", month: "long" })
+
+function createCalendar(identifier: CalendarIdentifier) {
+  switch (identifier) {
+    case "gregory":
+      return new GregorianCalendar()
+    default:
+      throw new Error(`Unsupported calendar ${identifier}`)
+  }
+}
 
 export type RangeValue<T> = { start: T, end: T }
 
@@ -77,6 +86,7 @@ export function RangeCalendar({ value, onSubmit, ref }: RangeCalendarProps) {
         maxValue={maxValue}
         minValue={minValue}
         value={dateRange}
+        createCalendar={createCalendar}
         onChange={setDateRange}
       >
         {({ state }) => {
