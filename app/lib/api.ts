@@ -1,6 +1,7 @@
 import type { AppLoadContext } from "react-router"
 import * as v from "valibot"
 import { UserSchema } from "./schema"
+import { AlbumWithPhotosSchema } from "~/schemas/album"
 
 export class AlbumApi {
   #database: AppLoadContext["db"]
@@ -46,8 +47,9 @@ export class AlbumApi {
         }
       }
     })
+    const transformed = v.parse(v.array(AlbumWithPhotosSchema), group?.albums)
 
-    return group?.albums ?? []
+    return transformed
   }
 
   async isGroupMember(userId: string, groupId: number) {
