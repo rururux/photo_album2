@@ -1,9 +1,12 @@
-import type { HTMLAttributes } from "react"
+import type { ButtonHTMLAttributes } from "react"
 import { mergeProps } from "react-aria"
 import styles from "./styles.module.css"
 
-export function FloatingActionButton({ children, ...props }: HTMLAttributes<HTMLButtonElement>) {
-  const mergedProps = mergeProps<HTMLAttributes<HTMLButtonElement>[]>({ className: styles.floatingActionButton }, props)
+export function FloatingActionButton({ children, ...props }: ButtonHTMLAttributes<HTMLButtonElement>) {
+  const mergedProps = mergeProps<ButtonHTMLAttributes<HTMLButtonElement>[]>(
+    { className: styles.floatingActionButton, type: "button" },
+    props
+  )
 
   return (
     <button type="button" {...mergedProps}>
