@@ -45,7 +45,7 @@
 .iconButtonContentLayer {
   width: 100%;
   height: 100%;
-  color: var(--icon-button-color);
+  color: var(--icon-button-color, --default-icon-button-color);
   background-color: var(--icon-button-background-color);
   border: var(--icon-button-border);
   border-radius: 50%;
@@ -69,13 +69,13 @@
 /* variant */
 
 .iconButtonStandard {
-  --icon-button-color: var(--md-color-on-surface-variant);
+  --default-icon-button-color: var(--md-color-on-surface-variant);
   --icon-button-background-color: unset;
   --icon-button-state-layer-background-color: var(--md-color-on-surface-variant);
 }
 
 .iconButtonOutlined {
-  --icon-button-color: var(--md-color-on-surface-variant);
+  --default-icon-button-color: var(--md-color-on-surface-variant);
   --icon-button-background-color: unset;
   --icon-button-state-layer-background-color: var(--md-color-on-surface-variant);
   --icon-button-border: 1px solid var(--md-color-outline-variant);

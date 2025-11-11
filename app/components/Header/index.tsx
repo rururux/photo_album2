@@ -1,14 +1,27 @@
-import type { HTMLAttributes } from "react"
+import type { HTMLAttributes, ReactNode } from "react"
 import { mergeProps } from "react-aria"
 import styles from "./styles.module.css"
+import type { HeaderState } from "./hooks"
 
 export const Header = { Root, Leading, Title, Trailing }
 
-function Root(props: HTMLAttributes<HTMLElement>) {
-  const mergedProps = mergeProps<HTMLAttributes<HTMLElement>[]>({ className: styles.headerRoot }, props)
+type HeaderRootProps = Omit<HTMLAttributes<HTMLElement>, "children"> & ({
+  headerState: HeaderState,
+  children: ((headerState: HeaderState) => ReactNode)
+} | {
+  headerState?: never,
+  children: ReactNode
+})
+
+function Root({ headerState, children: _children, ...props }: HeaderRootProps) {
+  const classNames = [ styles.headerRoot, headerState?.isSelectionMode? styles.selectionHeader : "" ].join(" ").trimEnd()
+  const mergedProps = mergeProps<HTMLAttributes<HTMLElement>[]>({ className: classNames }, props)
+  const children = typeof _children === "function"? _children(headerState!) : _children
 
   return (
-    <header {...mergedProps} />
+    <header {...mergedProps}>
+      {children}
+    </header>
   )
 }
 

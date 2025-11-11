@@ -1,17 +1,33 @@
 .headerRoot {
   height: 64px;
+  color: var(--md-color-on-surface);
   background-color: var(--md-color-surface);
   display: flex;
   align-items: center;
+
+  --header-leading-icon-button-color: var(--md-color-on-surface);
+  --header-trailing-icon-button-color: var(--md-color-on-surface-variant);
+}
+
+.selectionHeader {
+  color: var(--md-color-on-primary);
+  background-color: var(--md-color-primary);
+  position: sticky;
+  top: 0;
+  z-index: 1;
+
+  --header-leading-icon-button-color: var(--md-color-on-primary);
+  --header-trailing-icon-button-color: var(--md-color-on-primary);
 }
 
 .headerLeading {
   padding-inline: 4px;
   color: var(--md-color-on-surface);
+
+  --icon-button-color: var(--header-leading-icon-button-color);
 }
 
 .headerTitle {
-  color: var(--md-color-on-surface);
   font-size: var(--md-typography-title-large-size);
   font-weight: var(--md-typography-title-large-weight);
   flex-grow: 1;
@@ -24,5 +40,6 @@
 .headerTrailing {
   padding-inline: 4px;
   display: flex;
-  color: var(--md-color-on-surface-variant);
+
+  --icon-button-color: var(--header-trailing-icon-button-color);
 }
