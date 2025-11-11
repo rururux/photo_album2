@@ -19,5 +19,5 @@ export function encodePhotoId(id: number) {
 }
 
 export function decodePhotoId(id: string) {
-  return photoSqids.decode(id)
+  return photoSqids.decode(id)[1]
 }
