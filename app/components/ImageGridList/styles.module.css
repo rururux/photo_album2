@@ -1,0 +1,47 @@
+.imageGridListRoot {
+  /* TODO: Container width */
+  min-height: calc(150cqw + 0.5px);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
+  grid-auto-rows: 1fr;
+  gap: 1px;
+
+  /* グリッドの背景を表示させるやつ */
+  background-image: linear-gradient(var(--md-color-outline));
+  background-repeat: space;
+  background-size: calc(50cqw - 0.5px) calc(50cqw - 0.5px);
+}
+
+.imageGridListItem {
+  display: grid;
+
+  & img {
+    grid-area: 1 / 1 / -1 / -1;
+
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    aspect-ratio: 1 / 1;
+  }
+}
+
+.imageGridListItemCheckbox {
+  grid-area: 1 / 1 / -1 / -1;
+
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  position: relative;
+  top: 8px;
+  left: 8px;
+
+  color: transparent;
+
+  &[data-selected] {
+    color: var(--md-color-on-primary);
+    background-color: var(--md-color-primary);
+  }
+}
