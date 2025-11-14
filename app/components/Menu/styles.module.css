@@ -1,0 +1,38 @@
+.menuTriggerButton {
+  anchor-name: --anchor-id;
+}
+
+.menuPopover {
+  top: anchor(--anchor-id top);
+  left: auto;
+  right: anchor(--anchor-id right);
+}
+
+.menuList {
+  min-width: 112px;
+  background-color: var(--md-color-surface-container);
+  border-radius: 4px;
+  padding-block: 8px;
+}
+
+.menuListItem {
+  color: var(--md-color-on-surface);
+  height: 48px;
+  padding-inline: 12px;
+  display: flex;
+  align-items: center;
+  position: relative;
+  cursor: pointer;
+
+  &[data-hovered]::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-color: rgb(from var(--md-color-on-surface) r g b / 0.08);
+  }
+
+  &:focus-visible, &[data-focus-visible] {
+    outline: 3px solid var(--md-color-secondary);
+    outline-offset: -3px;
+  }
+}
