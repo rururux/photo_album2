@@ -60,7 +60,7 @@ export async function action({ request, context }: Route.ActionArgs) {
     return redirect("/login")
   }
 
-  const albumApi = new AlbumApi(context.db)
+  const albumApi = new AlbumApi(context)
 
   switch (request.method) {
     case "POST": {

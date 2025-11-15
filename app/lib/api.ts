@@ -2,18 +2,21 @@ import type { AppLoadContext } from "react-router"
 import * as v from "valibot"
 import { UserSchema } from "./schema"
 import { AlbumWithPhotosSchema } from "~/schemas/album"
+import schemas from "workers/lib/db/schema"
+import { decodeAlbumId, decodePhotoId } from "~/utils/sqids"
+import { and, eq, inArray } from "drizzle-orm"
 
 export class AlbumApi {
-  #database: AppLoadContext["db"]
+  #context: AppLoadContext
 
   constructor(
-    database: AppLoadContext["db"]
+    context: AppLoadContext,
   ) {
-    this.#database = database
+    this.#context = context
   }
 
   async getGroupsByUser(userId: string) {
-    const usersToGroups = await this.#database.query.usersToGroups.findMany({
+    const usersToGroups = await this.#context.db.query.usersToGroups.findMany({
       where: (table, { eq }) => eq(table.userId, userId),
       with: {
         group: {
@@ -39,7 +42,7 @@ export class AlbumApi {
   }
 
   async getAlbumsByGroup(groupId: number) {
-    const group = await this.#database.query.groups.findFirst({
+    const group = await this.#context.db.query.groups.findFirst({
       where: (t, { eq }) => eq(t.id, groupId),
       with: {
         albums: {
@@ -53,10 +56,52 @@ export class AlbumApi {
   }
 
   async isGroupMember(userId: string, groupId: number) {
-    const usersToGroups = await this.#database.query.usersToGroups.findFirst({
+    const usersToGroups = await this.#context.db.query.usersToGroups.findFirst({
       where: (t, { and, eq }) => and(eq(t.userId, userId), eq(t.groupId, groupId))
     })
 
     return usersToGroups !== undefined
+  }
+
+  async deleteAlbum(albumId: string) {
+    const decodedAlbumId = decodeAlbumId(albumId)
+
+    const [ returning ] = await this.#context.db.batch([
+      this.#context.db
+        .delete(schemas.photos)
+        .where(eq(schemas.photos.albumId, decodedAlbumId))
+        .returning({ deletedPhotoSrc: schemas.photos.src }),
+      this.#context.db.delete(schemas.albums).where(eq(schemas.albums.id, decodedAlbumId))
+    ])
+    const deletedPhotoSrcs = returning.map(({ deletedPhotoSrc }) => deletedPhotoSrc)
+
+    this.#context.cloudflare.ctx.waitUntil(
+      this.cleanUpDeletedPhotos(deletedPhotoSrcs)
+    )
+  }
+
+  async deletePhotos(albumId: string, photoIds: string[]) {
+    const decodedAlbumId = decodeAlbumId(albumId)
+    const decodedPhotoIds = photoIds.map(photoId => decodePhotoId(photoId))
+
+    const returning = await this.#context.db
+      .delete(schemas.photos)
+      .where(
+        and(inArray(schemas.photos.id, decodedPhotoIds), eq(schemas.photos.albumId, decodedAlbumId))
+      )
+      .returning({ deletedPhotoSrc: schemas.photos.src })
+    const deletedPhotoSrcs = returning.map(({ deletedPhotoSrc }) => deletedPhotoSrc)
+
+    this.#context.cloudflare.ctx.waitUntil(
+      this.cleanUpDeletedPhotos(deletedPhotoSrcs)
+    )
+  }
+
+  async cleanUpDeletedPhotos(deletedPhotoSrcs: string[]) {
+    const bucketKeys = deletedPhotoSrcs
+      .map(deletedPhotoSrc => deletedPhotoSrc.match(/[^\/]+$/)?.at(0))
+      .filter(bucketKey => typeof bucketKey === "string")
+
+    await this.#context.cloudflare.env.BUCKET.delete(bucketKeys)
   }
 }

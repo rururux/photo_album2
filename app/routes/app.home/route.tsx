@@ -20,7 +20,7 @@ export async function loader({ request, context }: Route.LoaderArgs) {
     return redirect("/app/welcome")
   }
 
-  const albumApi = new AlbumApi(context.db)
+  const albumApi = new AlbumApi(context)
   const albums = await albumApi.getAlbumsByGroup(defaultGroup)
 
   return {
