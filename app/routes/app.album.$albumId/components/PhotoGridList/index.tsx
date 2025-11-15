@@ -24,7 +24,7 @@ export function PhotoGridList({ photoItems, isEditable, selection, setSelection 
         onSelectionChange={setSelection}
       >
         {photoItems.map(item => (
-          <ImageGridList.Item id={item.id} href={item.src} target="_blank" key={item.id}>
+          <ImageGridList.Item id={item.id} href={item.src + "?raw"} target="_blank" key={item.id}>
             <img src={item.src} alt="" />
           </ImageGridList.Item>
         ))}

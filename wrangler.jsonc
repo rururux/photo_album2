@@ -19,5 +19,8 @@
 			"binding": "BUCKET",
 			"bucket_name": "photo-album"
 		}
-	]
+	],
+  "images": {
+    "binding": "IMAGES"
+  }
 }
