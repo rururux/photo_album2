@@ -1,0 +1,4 @@
+.pageRoot {
+  min-height: 100dvh;
+  container-type: inline-size;
+}
