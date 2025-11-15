@@ -1,9 +1,9 @@
 import type { AppLoadContext } from "react-router"
 import * as v from "valibot"
-import { UserSchema } from "./schema"
+import { AlbumInsertSchema, AlbumUpdateSchema, PhotoInsertSchema, UserSchema } from "./schema"
 import { AlbumWithPhotosSchema } from "~/schemas/album"
 import schemas from "workers/lib/db/schema"
-import { decodeAlbumId, decodePhotoId } from "~/utils/sqids"
+import { decodeAlbumId, decodePhotoId, encodeAlbumId } from "~/utils/sqids"
 import { and, eq, inArray } from "drizzle-orm"
 
 export class AlbumApi {
@@ -63,6 +63,26 @@ export class AlbumApi {
     return usersToGroups !== undefined
   }
 
+  async createAlbum(groupId: number, albumData: unknown) {
+    const parsedNewAlbumData = v.parse(AlbumInsertSchema, albumData)
+    const [{ id: createdAlbumId }] = await this.#context.db
+      .insert(schemas.albums)
+      .values({ groupId,  ...parsedNewAlbumData })
+      .returning({ id: schemas.albums.id })
+
+    return { createdAlbumId: encodeAlbumId(createdAlbumId)}
+  }
+
+  async updateAlbum(albumId: string, updateData: unknown) {
+    const decodedAlbumId = decodeAlbumId(albumId)
+    const parsedUpdateData = v.parse(AlbumUpdateSchema, updateData)
+
+    await this.#context.db
+      .update(schemas.albums)
+      .set(parsedUpdateData)
+      .where(eq(schemas.albums.id, decodedAlbumId))
+  }
+
   async deleteAlbum(albumId: string) {
     const decodedAlbumId = decodeAlbumId(albumId)
 
@@ -78,6 +98,25 @@ export class AlbumApi {
     this.#context.cloudflare.ctx.waitUntil(
       this.cleanUpDeletedPhotos(deletedPhotoSrcs)
     )
+  }
+
+  async createPhotos(albumId: string, newPhotoDatas: unknown[]) {
+    const decodedAlbumId = decodeAlbumId(albumId)
+    const parsedNewItemDatas = newPhotoDatas.map(newPhoto => v.parse(PhotoInsertSchema, newPhoto))
+    const insertValues = parsedNewItemDatas.map(item => ({
+      albumId: decodedAlbumId,
+      src: `/photo/${item.fileHash}`,
+      date: new Date(item.date)
+    }))
+
+    const insertResult = await this.#context.db
+      .insert(schemas.photos)
+      .values(insertValues)
+      .returning({ id: schemas.photos.id })
+    const createdPhotoIds = insertResult.map(returning => returning.id)
+    const fileDatas = parsedNewItemDatas.map(newPhotoData => ({ fileHash: newPhotoData.fileHash, fileSize: newPhotoData.fileSize }))
+
+    return { createdPhotoIds, fileDatas }
   }
 
   async deletePhotos(albumId: string, photoIds: string[]) {
