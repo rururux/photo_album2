@@ -7,7 +7,7 @@ export const CreateAlbumFormSchema = v.pipe(
       startDate: v.string(),
       endDate: v.string(),
     }),
-    items: v.pipe(
+    newItems: v.pipe(
       v.array(
         v.strictObject({
           src: v.string(),
@@ -24,7 +24,7 @@ export const CreateAlbumFormSchema = v.pipe(
     )
   }),
   v.forward(
-    v.check(({ items, files }) => items.length === files.length),
+    v.check(({ newItems, files }) => newItems.length === files.length),
     [ "files" ]
   )
 )

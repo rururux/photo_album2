@@ -83,13 +83,13 @@ export async function action({ request, context }: Route.ActionArgs) {
 
         createdAlbumId = insertResult[0].id
         currentStep++
-      } else if (part.name === "items") {
+      } else if (part.name === "newItems") {
         if (currentStep !== 1) {
           throw new Error("stepError")
         }
 
         const json = JSON.parse(part.text)
-        const result = v.parse(CreateAlbumFormSchema.entries.items, json)
+        const result = v.parse(CreateAlbumFormSchema.entries.newItems, json)
         const insertResult = await context.db
           .insert(schemas.photos)
           .values(result.map(item => ({ albumId: createdAlbumId!, src: `${url.origin}/photo/${item.fileHash}`, date: new Date(item.date) })))
@@ -161,17 +161,17 @@ export default function CreateAlbumPage() {
         startDate: "",
         endDate: "",
       },
-      items: [],
+      newItems: [],
       files: []
     }
   })
-  const items = watch("items")
+  const newItems = watch("newItems")
   const startDate = watch("album.startDate")
   const endDate = watch("album.endDate")
   const dateRange = startDate !== ""? { start: startDate, end: endDate } : null
   const formattedStartDate = startDate !== "" ? formatRelativeDate(startDate, now) : "-- / --"
   const formattedEndDate = endDate !== ""? formatRelativeDate(endDate, startDate, { minimumUnit: "day" }) : "-- / --"
-  const fileHashesSet = new Set(items.map(item => item.fileHash))
+  const fileHashesSet = new Set(newItems.map(newItem => newItem.fileHash))
 
   const fetcher = useFetcher()
   const rangeCalendarDialogRef = useRef<HTMLDialogElement>(null)
@@ -187,22 +187,22 @@ export default function CreateAlbumPage() {
 
     const photoFiles = getValues("files")
     const selectedItems = Array.from(selection)
-      .map(key => items.find(item => item.fileHash === key))
+      .map(key => newItems.find(item => item.fileHash === key))
       .filter(item => !!item)
     const selectedItemIndexes = new Set(
       Array.from(selection)
-        .map((_, i) => items.indexOf(selectedItems[i]))
+        .map((_, i) => newItems.indexOf(selectedItems[i]))
         .filter(index => index !== -1)
     )
 
     selectedItems.forEach(selectedItem => URL.revokeObjectURL(selectedItem.src))
-    setValue("items", items.filter((_, i) => !selectedItemIndexes.has(i)))
+    setValue("newItems", newItems.filter((_, i) => !selectedItemIndexes.has(i)))
     setValue("files", photoFiles.filter((_, i) => !selectedItemIndexes.has(i)))
     setSelection(new Set())
   }
 
   const handleChange = (files: File[]) => {
-    const items = getValues("items")
+    const items = getValues("newItems")
     const photoFiles = getValues("files")
 
     ;(async () => {
@@ -218,7 +218,7 @@ export default function CreateAlbumPage() {
         fileSize: file.size
       }))
 
-      setValue("items", [ ...items, ...newItems ])
+      setValue("newItems", [ ...items, ...newItems ])
       setValue("files", [ ...photoFiles, ...uniqueFiles ])
     })()
   }
@@ -231,14 +231,14 @@ export default function CreateAlbumPage() {
     const formData = new FormData()
 
     formData.append("album", JSON.stringify(data.album))
-    formData.append("items", JSON.stringify(data.items))
+    formData.append("newItems", JSON.stringify(data.newItems))
     data.files.map(file => formData.append("files", file))
 
     fetcher.submit(formData, { method: "POST", encType: "multipart/form-data" })
   })
 
   useEffect(() => {
-    const items = getValues("items")
+    const items = getValues("newItems")
 
     return () => items.forEach(selectedItem => URL.revokeObjectURL(selectedItem.src))
   }, [ getValues ])
@@ -280,7 +280,7 @@ export default function CreateAlbumPage() {
         <form id={formId} onSubmit={handleFormSubmit} ref={formRef}>
           <div>
             <ThumbGrid.Root>
-              {items.map(item => (
+              {newItems.map(item => (
                 <ThumbGrid.Item src={item.src} alt="" key={item.fileHash} />
               ))}
             </ThumbGrid.Root>
@@ -297,14 +297,14 @@ export default function CreateAlbumPage() {
           </div>
           <div>
             <div className={styles.albumPhotoListHeader}>
-              <span>画像 {items.length}枚</span>
+              <span>画像 {newItems.length}枚</span>
             </div>
             <ImageGridList.Root
               className={styles.albumPhotoListBody}
               selectedKeys={selection}
               onSelectionChange={setSelection}
             >
-              {items.map(item => (
+              {newItems.map(item => (
                 <ImageGridList.Item id={item.fileHash} href={item.src} target="_blank" key={item.fileHash}>
                   <img src={item.src} alt="" />
                 </ImageGridList.Item>
