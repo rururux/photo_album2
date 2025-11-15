@@ -3,7 +3,7 @@ import styles from "./styles.module.css"
 import { mergeProps } from "react-aria"
 
 type IconProps = Omit<HTMLAttributes<SVGElement>, "children"> & {
-  icon: "arrow-back" | "add" | "edit-calendar" | "close" | "check" | "delete"
+  icon: "arrow-back" | "add" | "edit-calendar" | "close" | "check" | "delete" | "more"
 }
 
 export function Icon({ icon, ...props }: IconProps) {
