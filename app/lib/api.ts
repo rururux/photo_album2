@@ -63,6 +63,17 @@ export class AlbumApi {
     return usersToGroups !== undefined
   }
 
+  async canUserAccessAlbum(userId: string, albumId: string) {
+    const decodedAlbumId = decodeAlbumId(albumId)
+    const result = await this.#context.db.select()
+      .from(schemas.usersToGroups)
+      .leftJoin(schemas.user, eq(schemas.usersToGroups.userId, schemas.user.id))
+      .leftJoin(schemas.albums, eq(schemas.usersToGroups.groupId, schemas.albums.groupId))
+      .where(and(eq(schemas.user.id, userId), eq(schemas.albums.id, decodedAlbumId)))
+
+    return result.length !== 0
+  }
+
   async createAlbum(groupId: number, albumData: unknown) {
     const parsedNewAlbumData = v.parse(AlbumInsertSchema, albumData)
     const [{ id: createdAlbumId }] = await this.#context.db
