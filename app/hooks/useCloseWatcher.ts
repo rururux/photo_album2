@@ -1,4 +1,4 @@
-import { useEffect, useEffectEvent, useRef } from "react"
+import { useCallback, useEffect, useEffectEvent, useRef } from "react"
 
 type UseCloseWatcherProps = {
   enabled: boolean,
@@ -12,6 +12,8 @@ export function useCloseWatcher({ enabled, onCancel = noop, onClose }: UseCloseW
   const closeWatcherRef = useRef<CloseWatcher>(null)
   const handleCancel = useEffectEvent(onCancel)
   const handleClose = useEffectEvent(onClose)
+  const requestClose = useCallback(() => closeWatcherRef.current?.requestClose(), [])
+  const close = useCallback(() => closeWatcherRef.current?.close(), [])
 
   useEffect(() => {
     if (!enabled) return
@@ -24,13 +26,12 @@ export function useCloseWatcher({ enabled, onCancel = noop, onClose }: UseCloseW
     closeWatcher.addEventListener("close", handleClose)
 
     return () => {
-      abortController.abort()
+      closeWatcherRef.current?.close()
       closeWatcherRef.current = null
     }
   }, [ enabled ])
 
   return {
-    requestClose: () => closeWatcherRef.current?.requestClose(),
-    close: () => closeWatcherRef.current?.close()
+    requestClose, close
   }
 }
