@@ -7,7 +7,7 @@ import { Button } from "~/components/Button"
 import { ThumbGrid } from "~/components/ThumbGrid"
 import { FilePickerButton } from "../app.album.create/components/FilePickerButton"
 import { RangeCalendar } from "~/components/RangeCalendar"
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { useHeader } from "~/components/Header/hooks"
 import type { Key } from "react-aria"
 import { useSelection } from "~/hooks/useSelection"
@@ -246,7 +246,7 @@ export default function AlbumPage({ params, loaderData }: Route.ComponentProps) 
   })
   const album = watch("album")
   const newItems = watch("newItems")
-  const photoItems = [ ...loaderData.photos, ...newItems ]
+  const photoItems = useMemo(() => [ ...loaderData.photos, ...newItems ], [ loaderData.photos, newItems ])
   const dateRange = album.startDate !== ""? { start: album.startDate, end: album.endDate } : null
   const fileHashesSet = new Set(newItems.map(item => item.fileHash))
   const { showRangeCalendar, rangeCalendarState } = useRangeCalendar({

@@ -1,16 +1,15 @@
-import { cloneElement, createContext, useContext, useEffect, useEffectEvent, useRef, useState, type PropsWithChildren, type RefObject } from "react"
+import { Activity, cloneElement, createContext, useContext, useEffect, useEffectEvent, useLayoutEffect, useMemo, useRef, useState, type PropsWithChildren, type RefObject } from "react"
 import styles from "./styles.module.css"
 import { Divider } from "../Divider"
 import { Button } from "../Button"
-import { useVirtualizer } from "@tanstack/react-virtual"
+import { useVirtualizer, type VirtualItem } from "@tanstack/react-virtual"
 import { IconButton } from "../IconButton"
 import { Icon } from "../Icon"
 import formatRelativeDate from "~/utils/formatRelativeDate"
 import now from "~/utils/now"
 import isSameYear from "~/utils/isSameYear"
-import { CalendarCell, CalendarGrid, RangeCalendarStateContext, RangeCalendar as RARangeCalendar, type CalendarGridBodyProps, type DateRange } from "react-aria-components"
+import { CalendarCell, CalendarGrid, RangeCalendarStateContext, RangeCalendar as RARangeCalendar, type CalendarGridBodyProps, type DateRange, type RangeCalendarState } from "react-aria-components"
 import { CalendarDate, endOfMonth, GregorianCalendar, parseDate, startOfMonth, type CalendarIdentifier, type DateDuration } from "@internationalized/date"
-import { filterDOMProps } from "@react-aria/utils"
 
 const fiveYearMonths = 5 * 12
 const nowDate = parseDate("2025-11-09")
@@ -39,18 +38,9 @@ type RangeCalendarProps = {
 }
 
 export function RangeCalendar({ value, onSubmit, ref }: RangeCalendarProps) {
-  const scrollerRef = useRef<HTMLDivElement>(null)
+  const [ isDialogOpen, setIsDialogOpen ] = useState(false)
   const [ dateRange, setDateRange ] = useState<DateRange | null>(value && { start: parseDate(value.start), end: parseDate(value.end) })
 
-  const calendarListVirtualizer = useVirtualizer({
-    count: fiveYearMonths + 1,
-    getScrollElement: () => scrollerRef.current,
-    estimateSize: () => 341,
-  })
-
-  const scrollCalendar = useEffectEvent(() => {
-    calendarListVirtualizer.scrollToIndex(fiveYearMonths / 2, { align: "start" })
-  })
   const closeDialog = () => ref.current?.requestClose()
   const submitValue = () => {
     if (dateRange === null) return
@@ -62,17 +52,15 @@ export function RangeCalendar({ value, onSubmit, ref }: RangeCalendarProps) {
     closeDialog()
   }
 
-  // Props の onToggle では何故か動かんので直接つける
+  // Props の onToggle では何故かリロード直後に動かんので直接つける
   // おそらく要素本体ではなく <body> とかにイベントリスナを設定する仕様の為か？
   useEffect(() => {
     if (ref.current === null) return
 
     const abortController = new AbortController()
 
-    ref.current.addEventListener("toggle", e => {
-      if (e.newState === "open") {
-        scrollCalendar()
-      }
+    ref.current.addEventListener("beforetoggle", e => {
+      setIsDialogOpen(e.newState === "open")
     }, { signal: abortController.signal })
 
     return () => abortController.abort()
@@ -80,103 +68,128 @@ export function RangeCalendar({ value, onSubmit, ref }: RangeCalendarProps) {
 
   return (
     <dialog className={styles.rangeCalendarRoot} ref={ref}>
-      <RARangeCalendar
-        className={styles.rangeCalendarDialogBody}
-        visibleDuration={visibleDuration}
-        maxValue={maxValue}
-        minValue={minValue}
-        value={dateRange}
-        createCalendar={createCalendar}
-        onChange={setDateRange}
-      >
-        {({ state }) => {
-          const startDate = state.anchorDate ?? state.value?.start
-          const endDate = state.anchorDate === null? state.value?.end : null
-
-          return (
-            <>
-              <header className={styles.rangeCalendarHeader}>
-                <div className={styles.rangeCalendarHeaderButtons}>
-                  <IconButton size="small" onClick={closeDialog}>
-                    <Icon icon="close" />
-                  </IconButton>
-                </div>
-                <div className={styles.rangeCalendarHeaderTitles}>
-                  <span className={styles.rangeCalendarHeaderTitlesSupportingText}>期間を選択</span>
-                  <h2 className={styles.rangeCalendarHeaderTitlesHeadline}>
-                    {
-                      startDate? formatRelativeDate(startDate.toString(), now) : "-- / --"
-                    } ～ {
-                      endDate
-                        ? formatRelativeDate(endDate.toString(), startDate!.toString(), {
-                            minimumUnit: isSameYear(now, startDate!.toString())? "month" : "year"
-                          })
-                        : "-- / --"
-                    }
-                  </h2>
-                </div>
-                <Divider />
-                <div className={styles.rangeCalendarWeekDays}>
-                  {[ "S", "M", "T", "W", "T", "F", "S" ].map((weekDay, id) => (
-                    <span key={id}>{weekDay}</span>
-                  ))}
-                </div>
-              </header>
-              <main className={styles.rangeCalendarTableList} ref={scrollerRef}>
-                <div
-                  style={{
-                    height: `${calendarListVirtualizer.getTotalSize()}px`,
-                    width: "100%",
-                    position: "relative"
-                  }}
-                >
-                  {calendarListVirtualizer.getVirtualItems().map(calendarVirtual => {
-                    const offset = { months: calendarVirtual.index }
-
-                    return (
-                      <div
-                        className={styles.rangeCalendarBody}
-                        style={{
-                          position: "absolute",
-                          top: 0,
-                          left: 0,
-                          width: "100%",
-                          height: `${calendarVirtual.size}px`,
-                          transform: `translateY(${calendarVirtual.start}px)`,
-                        }}
-                        key={calendarVirtual.key}
-                      >
-                        <div className={styles.rangeCalendarMonthSubhead}>
-                          {dateFormatter.format(state.visibleRange.start.add(offset).toDate("asia/tokyo"))}
-                        </div>
-                        <CalendatContextProvider offset={offset}>
-                          <CalendarGrid className={styles.rangeCalendarTable} offset={offset}>
-                            <CalendarGridBody2>
-                              {(date) => (
-                                <CalendarCell className={styles.rangeCalendarTableCell} date={date}>
-                                  {({ formattedDate }) => (
-                                    <span className={styles.rangeCalendarTableCellDay}>{formattedDate}</span>
-                                  )}
-                                </CalendarCell>
-                              )}
-                            </CalendarGridBody2>
-                          </CalendarGrid>
-                        </CalendatContextProvider>
-                      </div>
-                    )
-                  })}
-                </div>
-              </main>
-              <Divider />
-              <footer className={styles.rangeCalendarFooter}>
-                <Button onClick={closeDialog}>キャンセル</Button>
-                <Button disabled={dateRange === null} onClick={submitValue}>OK</Button>
-              </footer>
-            </>
-          )
-        }}
-      </RARangeCalendar>
+      <Activity mode={isDialogOpen? "visible" : "hidden"}>
+        <RARangeCalendar
+          className={styles.rangeCalendarDialogBody}
+          visibleDuration={visibleDuration}
+          maxValue={maxValue}
+          minValue={minValue}
+          value={dateRange}
+          createCalendar={createCalendar}
+          onChange={setDateRange}
+        >
+          <RangeCalenderBody closeDialog={closeDialog} dateRange={dateRange} submitValue={submitValue} />
+        </RARangeCalendar>
+      </Activity>
     </dialog>
+  )
+}
+
+function RangeCalenderBody({ closeDialog, dateRange, submitValue }: {
+  closeDialog: VoidFunction,
+  dateRange: DateRange | null,
+  submitValue: VoidFunction
+}) {
+  const calendarListVirtualizer = useVirtualizer({
+    count: fiveYearMonths + 1,
+    getScrollElement: () => scrollerRef.current,
+    estimateSize: () => 341
+  })
+  const scrollCalendar = useEffectEvent(() => {
+    calendarListVirtualizer.scrollToIndex(fiveYearMonths / 2, { align: "start" })
+  })
+  const scrollerRef = useRef<HTMLDivElement>(null)
+
+  const state = useContext(RangeCalendarStateContext)!!
+  const startDate = state.anchorDate ?? state.value?.start
+  const endDate = state.anchorDate === null? state.value?.end : null
+
+  useLayoutEffect(() => scrollCalendar(), [])
+
+  return (
+    <>
+      <header className={styles.rangeCalendarHeader}>
+        <div className={styles.rangeCalendarHeaderButtons}>
+          <IconButton size="small" onClick={closeDialog}>
+            <Icon icon="close" />
+          </IconButton>
+        </div>
+        <div className={styles.rangeCalendarHeaderTitles}>
+          <span className={styles.rangeCalendarHeaderTitlesSupportingText}>期間を選択</span>
+          <h2 className={styles.rangeCalendarHeaderTitlesHeadline}>
+            {
+              startDate? formatRelativeDate(startDate.toString(), now) : "-- / --"
+            } ～ {
+              endDate
+                ? formatRelativeDate(endDate.toString(), startDate!.toString(), {
+                    minimumUnit: isSameYear(now, startDate!.toString())? "month" : "year"
+                  })
+                : "-- / --"
+            }
+          </h2>
+        </div>
+        <Divider />
+        <div className={styles.rangeCalendarWeekDays}>
+          {[ "S", "M", "T", "W", "T", "F", "S" ].map((weekDay, id) => (
+            <span key={id}>{weekDay}</span>
+          ))}
+        </div>
+      </header>
+      <main className={styles.rangeCalendarTableList} ref={scrollerRef}>
+        <div
+          style={{
+            height: `${calendarListVirtualizer.getTotalSize()}px`,
+            width: "100%",
+            position: "relative"
+          }}
+        >
+          {calendarListVirtualizer.getVirtualItems().map(calendarVirtual => (
+            <RangeCalenderGrid state={state} calendarVirtual={calendarVirtual} key={calendarVirtual.key} />
+          ))}
+        </div>
+      </main>
+      <Divider />
+      <footer className={styles.rangeCalendarFooter}>
+        <Button onClick={closeDialog}>キャンセル</Button>
+        <Button disabled={dateRange === null} onClick={submitValue}>OK</Button>
+      </footer>
+    </>
+  )
+}
+
+function RangeCalenderGrid({ state, calendarVirtual }: { state: RangeCalendarState, calendarVirtual: VirtualItem }) {
+  const offset = useMemo(() => ({ months: calendarVirtual.index }), [ calendarVirtual.index ])
+
+  return (
+    <div
+      className={styles.rangeCalendarBody}
+      style={{
+        position: "absolute",
+        top: 0,
+        left: 0,
+        width: "100%",
+        height: `${calendarVirtual.size}px`,
+        transform: `translateY(${calendarVirtual.start}px)`,
+      }}
+      key={calendarVirtual.key}
+    >
+      <div className={styles.rangeCalendarMonthSubhead}>
+        {dateFormatter.format(state.visibleRange.start.add(offset).toDate("asia/tokyo"))}
+      </div>
+      <CalendatContextProvider offset={offset}>
+        <CalendarGrid className={styles.rangeCalendarTable} offset={offset}>
+          <CalendarGridBody2>
+            {(date) => (
+              <CalendarCell className={styles.rangeCalendarTableCell} date={date}>
+                {({ formattedDate }) => (
+                  <span className={styles.rangeCalendarTableCellDay}>{formattedDate}</span>
+                )}
+              </CalendarCell>
+            )}
+          </CalendarGridBody2>
+        </CalendarGrid>
+      </CalendatContextProvider>
+    </div>
   )
 }
 
@@ -205,11 +218,9 @@ function CalendarGridBody2(props: CalendarGridBodyProps) {
   const { children, style, className } = props
   const rangeCalendarState = useContext(RangeCalendarStateContext)!
   const { startDate } = useContext(CalendarContext)!
-  const domProps = filterDOMProps(props, { global: true })
 
   return (
     <tbody
-      {...domProps}
       style={style}
       className={className}>
       {[...new Array(6).keys()].map((weekIndex) => (
