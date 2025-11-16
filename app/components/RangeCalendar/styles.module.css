@@ -1,8 +1,9 @@
 .rangeCalendarRoot {
   width: 100%;
   height: 100dvh;
-  max-width: unset;
+  max-width: 450px;
   max-height: unset;
+  place-self: center;
 }
 
 .rangeCalendarHeader {
