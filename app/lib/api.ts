@@ -66,7 +66,8 @@ export class AlbumApi {
       where: (t, { eq }) => eq(t.id, groupId),
       with: {
         albums: {
-          with: { photos: true }
+          with: { photos: true },
+          orderBy: (t, { desc }) => [ desc(t.startDate), desc(t.endDate) ]
         }
       }
     })
