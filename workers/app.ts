@@ -2,6 +2,7 @@ import { initAuth } from "./lib/auth"
 import { createRequestHandler } from "react-router";
 import schemas from "./lib/db/schema"
 import { drizzle } from "drizzle-orm/d1"
+import { resetGuestData } from "./lib/db/reset"
 
 declare module "react-router" {
   export interface AppLoadContext {
@@ -34,4 +35,10 @@ export default {
       auth, db
     });
   },
+
+  async scheduled(_controller, env) {
+    const db = initDrizzle(env.DB)
+
+    await resetGuestData(db, env.BUCKET)
+  }
 } satisfies ExportedHandler<Env>;

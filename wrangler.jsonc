@@ -22,5 +22,14 @@
 	],
   "images": {
     "binding": "IMAGES"
+  },
+  "env": {
+    "dev": {
+      "triggers": {
+        "crons": [
+          "* */1 * * *"
+        ]
+      }
+    }
   }
 }
