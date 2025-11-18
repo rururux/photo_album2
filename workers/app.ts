@@ -24,15 +24,25 @@ function initDrizzle(d1: D1Database) {
   return drizzle(d1, { schema: schemas, casing: "snake_case" })
 }
 
+let authCache: ReturnType<typeof initAuth> | null = null
+let dbCache: ReturnType<typeof initDrizzle> | null = null
+
 export default {
   async fetch(request, env, ctx) {
     const db = initDrizzle(env.DB)
-    // @ts-expect-error OMG
-    const auth = initAuth(db, env.OAUTH_LINE_CLIENT_SECRET)
-
     return requestHandler(request, {
       cloudflare: { env, ctx },
-      auth, db
+      get auth() {
+        // @ts-expect-error OMG
+        authCache ??= initAuth(db, env.OAUTH_LINE_CLIENT_SECRET)
+
+        return authCache
+      },
+      get db() {
+        dbCache ??= initDrizzle(env.DB)
+
+        return dbCache
+      }
     });
   },
 
