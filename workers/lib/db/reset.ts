@@ -163,7 +163,7 @@ async function deleteAllGuestData(db: AppLoadContext["db"], bucket: R2Bucket) {
 
   // filter initial photos hash
   const bucketKeys = deletePhotoResults
-    .map(deletePhotoResult => deletePhotoResult.deletedPhotoSrc.match(/[^\/]+$/)?.at(0))
+    .map(deletePhotoResult => deletePhotoResult.deletedPhotoSrc.match(/[^/]+$/)?.at(0))
     .filter(bucketKey => typeof bucketKey === "string")
     .filter(bucketKey => !initialPhotosHashSet.has(bucketKey))
 

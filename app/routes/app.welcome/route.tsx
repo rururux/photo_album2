@@ -1,4 +1,4 @@
-import { redirect, useFetcher, useSubmit } from "react-router"
+import { redirect, useFetcher } from "react-router"
 import type { Route } from "./+types/route"
 import schemas from "workers/lib/db/schema"
 import { GroupListItem } from "./components/GroupListItem"
@@ -123,7 +123,7 @@ export default function Welcome({ loaderData }: Route.ComponentProps) {
       <Header.Root>
         <Header.Title className={styles.welcomeHeader}>
           <span>ようこそ、</span>
-          <Avatar className={styles.userIcon} name={loaderData.user.name} image={loaderData.user.image} />
+          <Avatar className={styles.userIcon} name={loaderData.user.name} image={loaderData.user.image ?? undefined} />
           <span>{loaderData.user.name}さん</span>
         </Header.Title>
       </Header.Root>

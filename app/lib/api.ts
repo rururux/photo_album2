@@ -170,7 +170,7 @@ export class AlbumApi {
 
   async cleanUpDeletedPhotos(deletedPhotoSrcs: string[]) {
     const bucketKeys = deletedPhotoSrcs
-      .map(deletedPhotoSrc => deletedPhotoSrc.match(/[^\/]+$/)?.at(0))
+      .map(deletedPhotoSrc => deletedPhotoSrc.match(/[^/]+$/)?.at(0))
       .filter(bucketKey => typeof bucketKey === "string")
       .filter(bucketKey => !initialPhotosHashSet.has(bucketKey))
 

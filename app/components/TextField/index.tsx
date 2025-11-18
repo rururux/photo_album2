@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useId, type HTMLAttributes, type InputHTMLAttributes, type RefObject } from "react"
+import { createContext, useContext, useId, type HTMLAttributes, type InputHTMLAttributes, type RefObject } from "react"
 import { mergeProps, useObjectRef } from "react-aria"
 import { useController, type Control, type ControllerRenderProps, type FieldValues } from "react-hook-form"
 import styles from "./styles.module.css"
@@ -27,11 +27,10 @@ const TextFieldContext = createContext<{
 type TextFieldRootProps<T extends { [x: string]: string }> = HTMLAttributes<HTMLDivElement> & {
   control: Control<T>,
   name: string,
-  required?: boolean,
   variant?: "filled" | "outlined"
 }
 
-function Root<T extends FieldValues>({ control, name, required, variant = "filled", children, ...props }: TextFieldRootProps<T>) {
+function Root<T extends FieldValues>({ control, name, variant = "filled", children, ...props }: TextFieldRootProps<T>) {
   const inputId = useId()
   // @ts-expect-error UGHHH
   const { field: { ref, ...inputProps }, fieldState: { error: fieldError } } = useController<T>({ name, control, defaultValue: "" })
