@@ -1,2 +1,2 @@
-@import "tailwindcss/preflight.css";
-@import "./styles/materialTokens/tokens.css";
+@import url("tailwindcss/preflight.css");
+@import url("./styles/materialTokens/tokens.css");

@@ -100,7 +100,7 @@ function RangeCalenderBody({ closeDialog, dateRange, submitValue }: {
   })
   const scrollerRef = useRef<HTMLDivElement>(null)
 
-  const state = useContext(RangeCalendarStateContext)!!
+  const state = useContext(RangeCalendarStateContext)!
   const startDate = state.anchorDate ?? state.value?.start
   const endDate = state.anchorDate === null? state.value?.end : null
 
@@ -198,7 +198,7 @@ const CalendarContext = createContext<{ startDate: CalendarDate | undefined }>({
 })
 
 function CalendatContextProvider({ offset, children }: PropsWithChildren<{ offset?: DateDuration }>) {
-  const rangeCalendarState = useContext(RangeCalendarStateContext)!!
+  const rangeCalendarState = useContext(RangeCalendarStateContext)!
   let startDate = rangeCalendarState.visibleRange.start
 
   if (offset) {

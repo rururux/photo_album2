@@ -10,10 +10,10 @@
 
 .dateBadge {
   padding: 2px 10px;
-  color: var(--md-color-on-primary);
-  background-color: var(--md-color-primary);
   font-size: var(--md-typography-body-medium-size);
   font-weight: bold;
+  color: var(--md-color-on-primary);
+  background-color: var(--md-color-primary);
   border-radius: 4px;
 }
 

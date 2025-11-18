@@ -5,19 +5,18 @@
   --icon-size: 24px;
   --fab-state-layer-background-color: var(--md-color-on-primary);
 
-  width: var(--fab-size);
-  height: var(--fab-size);
-  color: var(--fab-icon-color);
-  background-color: var(--fab-backgroud-color);
-  border-radius: 16px;
-  cursor: pointer;
+  position: fixed;
+  right: calc(anchor(--layout-anchor right) + 1rem);
+  bottom: 1rem;
   display: grid;
   place-items: center;
+  width: var(--fab-size);
+  height: var(--fab-size);
   overflow: hidden;
-
-  position: fixed;
-  bottom: 1rem;
-  right: calc(anchor(--layout-anchor right) + 1rem);
+  color: var(--fab-icon-color);
+  cursor: pointer;
+  background-color: var(--fab-backgroud-color);
+  border-radius: 16px;
 
   /* TODO: shadow */
 }

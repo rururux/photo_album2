@@ -1,9 +1,9 @@
 .albumCard {
-  border: 1px solid var(--md-color-outline-variant);
-  border-radius: 12px;
-  background-color: var(--md-color-surface);
   position: relative;
   overflow: hidden;
+  background-color: var(--md-color-surface);
+  border: 1px solid var(--md-color-outline-variant);
+  border-radius: 12px;
 }
 
 .albumCardLink {
@@ -12,8 +12,8 @@
 }
 
 .albumCardThumbnails {
-  border-radius: 12px;
   overflow: hidden;
+  border-radius: 12px;
 }
 
 .albumCardContent {
@@ -22,13 +22,12 @@
 
 .albumCardDateChip {
   display: inline-block;
-  border-radius: 8px;
-  color: var(--md-color-on-primary);
-  background-color: var(--md-color-primary);
   padding: 4px 10px;
-
   font-size: var(--md-typography-body-small-size);
   font-weight: var(--md-typography-body-small-weight);
+  color: var(--md-color-on-primary);
+  background-color: var(--md-color-primary);
+  border-radius: 8px;
 }
 
 .albumCardTitle {

@@ -1,7 +1,7 @@
 .pageRoot {
-  min-height: 100dvh;
   display: grid;
   place-items: center;
+  min-height: 100dvh;
 }
 
 .loginButtons {

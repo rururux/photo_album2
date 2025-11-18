@@ -22,7 +22,7 @@ export function GroupListItem({ thumbSrc, name, users, onClick }:{
           </div>
           <div>
             {users.map(user => (
-              <Avatar className={styles.groupListItemUserIcon} name={user.name} image={user.image} key={user.id} />
+              <Avatar className={styles.groupListItemUserIcon} name={user.name} image={user.image ?? undefined} key={user.id} />
             ))}
           </div>
         </div>

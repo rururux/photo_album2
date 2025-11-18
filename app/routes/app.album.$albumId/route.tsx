@@ -94,7 +94,7 @@ export async function action({ request, params: { albumId }, context }: Route.Ac
       let currentStep = 0
       let createdAlbumId: string | null = method === "POST"? null : albumId
       let fileDatas: { fileHash: string, fileSize: number }[] = []
-      let r2PutPromises: Promise<R2Object>[] = []
+      const r2PutPromises: Promise<R2Object>[] = []
 
       const cleanUp = async () => {
         if (method !== "POST" || createdAlbumId === null) return
@@ -348,8 +348,14 @@ export default function AlbumPage({ params, loaderData }: Route.ComponentProps) 
 
     const formData = new FormData()
 
-    uploadTargetData.album && formData.append("album", JSON.stringify(data.album))
-    uploadTargetData.newItems && formData.append("newItems", JSON.stringify(data.newItems))
+    if (uploadTargetData.album) {
+      formData.append("album", JSON.stringify(data.album))
+    }
+
+    if (uploadTargetData.newItems) {
+      formData.append("newItems", JSON.stringify(data.newItems))
+    }
+
     data.files?.forEach(file => formData.append("files", file))
 
     fetcher.submit(formData, { method, encType: "multipart/form-data" })

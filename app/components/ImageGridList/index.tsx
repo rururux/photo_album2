@@ -7,8 +7,8 @@ export const ImageGridList = {
   Root, Item
 }
 
-function Root<T extends unknown[]>({ items, onSelectionChange, ...props }: Omit<GridListProps<T>, "onSelectionChange"> & { onSelectionChange: (newSelection: Set<Key>) => void }) {
-  const mergedProps = mergeProps({ className: styles.imageGridListRoot }, props)
+function Root<T extends unknown[]>({ onSelectionChange, ...props }: Omit<GridListProps<T>, "onSelectionChange"> & { onSelectionChange: (newSelection: Set<Key>) => void }) {
+  const mergedProps = mergeProps({ className: styles.imageGridListRoot, }, props)
   const handleSelectionChange: GridListProps<T>["onSelectionChange"] = newSelection => {
     if (typeof newSelection === "string") {
       console.warn("typeof newSelection === \"string\"")

@@ -3,19 +3,19 @@
 :root {
   --md-color-primary: #3E6837;
   --md-color-surface-tint: #3E6837;
-  --md-color-on-primary: #FFFFFF;
+  --md-color-on-primary: #FFF;
   --md-color-primary-container: #BFF0B1;
   --md-color-on-primary-container: #002201;
   --md-color-secondary: #53634E;
-  --md-color-on-secondary: #FFFFFF;
+  --md-color-on-secondary: #FFF;
   --md-color-secondary-container: #D6E8CD;
   --md-color-on-secondary-container: #111F0F;
   --md-color-tertiary: #386569;
-  --md-color-on-tertiary: #FFFFFF;
+  --md-color-on-tertiary: #FFF;
   --md-color-tertiary-container: #BCEBEF;
   --md-color-on-tertiary-container: #002022;
   --md-color-error: #BA1A1A;
-  --md-color-on-error: #FFFFFF;
+  --md-color-on-error: #FFF;
   --md-color-error-container: #FFDAD6;
   --md-color-on-error-container: #410002;
   --md-color-background: #F7FBF1;
@@ -26,7 +26,7 @@
   --md-color-on-surface-variant: #42493F;
   --md-color-outline: #73796E;
   --md-color-outline-variant: #C2C8BC;
-  --md-color-shadow: #000000;
+  --md-color-shadow: #000;
 
   /** 透明度 32% */
   /** https://m3.material.io/styles/elevation/applying-elevation#:~:text=role%20at%20an-,opacity%20of%2032%25,-. */
@@ -49,7 +49,7 @@
   --md-color-on-tertiary-fixed-variant: #1E4D51;
   --md-color-surface-dim: #D8DBD2;
   --md-color-surface-bright: #F7FBF1;
-  --md-color-surface-container-lowest: #FFFFFF;
+  --md-color-surface-container-lowest: #FFF;
   --md-color-surface-container-low: #F2F5EB;
   --md-color-surface-container: #ECEFE5;
   --md-color-surface-container-high: #E6E9E0;

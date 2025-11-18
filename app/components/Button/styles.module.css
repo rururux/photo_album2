@@ -1,10 +1,9 @@
 .button {
-  height: var(--button-size);
   position: relative;
   display: grid;
-  width: fit-content;
   place-items: center;
-
+  width: fit-content;
+  height: var(--button-size);
   font-size: var(--button-label-size);
   font-weight: var(--button-label-weight);
   color: var(--button-label-color);
@@ -12,8 +11,8 @@
   border-radius: var(--button-corner-size);
 
   &[disabled] {
-    color: rgb(from var(--button-label-color) r g b / 0.38);
-    background-color: rgb(from var(--button-background-color) r g b / 0.1);
+    color: rgb(from var(--button-label-color) r g b / 38%);
+    background-color: rgb(from var(--button-background-color) r g b / 10%);
   }
 
   &:focus-visible {
@@ -22,20 +21,20 @@
   }
 
   &::after {
-    content: "";
     position: absolute;
-    height: 100%;
-    min-height: 48px;
     width: 100%;
     min-width: 48px;
+    height: 100%;
+    min-height: 48px;
+    content: "";
   }
 }
 
 .buttonStateLayer {
   width: 100%;
   height: 100%;
-  border-radius: var(--button-corner-size);
   background-color: var(--button-state-layer-color);
+  border-radius: var(--button-corner-size);
   opacity: 0;
 
   .button:active:not([disabled]) > & {
@@ -47,7 +46,7 @@
   padding-inline: var(--button-inline-padding);
 }
 
-.buttonStateLayer, .buttonContentLayer {
+:is(.buttonStateLayer, .buttonContentLayer) {
   grid-area: 1 / 1 / -1 / -1;
 }
 
@@ -82,5 +81,6 @@
   --button-background-color: unset;
   --button-label-color: var(--md-color-on-surface-variant);
   --button-state-layer-color: var(--md-color-on-surface-variant);
+
   border: 1px solid var(--md-color-outline-variant);
 }

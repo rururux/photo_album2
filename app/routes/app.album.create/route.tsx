@@ -44,7 +44,7 @@ export async function action({ request, context }: Route.ActionArgs) {
   let createdAlbumId: number | null = null
   let createdPhotoIds: number[] | null = null
   let fileDatas: { hash: string, size: number }[] = []
-  let r2PutPromises: Promise<R2Object>[] = []
+  const r2PutPromises: Promise<R2Object>[] = []
 
   const cleanUp = async () => {
     const queries: BatchItem<"sqlite">[] = []

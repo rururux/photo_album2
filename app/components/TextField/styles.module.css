@@ -1,25 +1,24 @@
 .textField {
-  /* min-height: 56px; */
-  grid-template-rows: 56px;
+  position: relative;
   /* padding-inline: 16px; */
   display: grid;
+  /* min-height: 56px; */
+  grid-template-rows: 56px;
   align-items: center;
-  position: relative;
   cursor: text;
 }
 
 .textFieldLabel {
-  color: var(--md-color-on-surface-variant);
-  font-size: var(--md-typography-body-large-size);
-  font-weight: var(--md-typography-body-large-weight);
   position: absolute;
   display: flex;
   align-items: center;
+  font-size: var(--md-typography-body-large-size);
+  font-weight: var(--md-typography-body-large-weight);
+  color: var(--md-color-on-surface-variant);
   cursor: text;
-
-  transition-property: font-size, height, top;
-  transition-duration: 200ms;
   transition-timing-function: ease;
+  transition-duration: 200ms;
+  transition-property: font-size, height, top;
 
   .textField:focus-within > &, &:has(+ .textFieldInput:not(:placeholder-shown)) {
     font-size: var(--md-typography-body-small-size);
@@ -32,13 +31,13 @@
 }
 
 .textFieldInput {
-  padding-inline: 16px;
   width: 100%;
-  outline: none;
-  color: var(--md-color-on-surface);
+  padding-inline: 16px;
   font-size: var(--md-typography-body-large-size);
   font-weight: var(--md-typography-body-large-weight);
+  color: var(--md-color-on-surface);
   caret-color: var(--md-color-primary);
+  outline: none;
 
   &[aria-invalid], &:has(~ .textFieldErrorText) {
     caret-color: var(--md-color-error);
@@ -47,8 +46,8 @@
 
 .textFieldIndicator {
   position: absolute;
+  bottom: 0;
   width: 100%;
-  bottom: 0px;
   border-color: var(--md-color-primary);
 
   .textField:focus-within > & {
@@ -69,23 +68,23 @@
 }
 
 /* なぜこんなことをするのか: API を維持したままで Material Design を再現する為 */
-.textField::before, .textFieldLabel, .textFieldInput, .textFieldIndicator {
+:is(.textField::before, .textFieldLabel, .textFieldInput, .textFieldIndicator) {
   grid-row: 1 / 2;
 }
 
 .textFieldSupportingText, .textFieldErrorText {
   grid-row: 2 / 3;
+  padding-inline: 16px;
+  padding-top: 4px;
   font-size: var(--md-typography-body-small-size);
   font-weight: var(--md-typography-body-small-weight);
-  padding-top: 4px;
-  padding-inline: 16px;
 }
 
 .textFieldFilled {
   &::before {
+    height: 100%;
     content: "";
     background-color: var(--md-color-surface-container-highest);
-    height: 100%;
   }
 
   & > .textFieldInput {
@@ -93,10 +92,11 @@
     bottom: 8px;
   }
 
+  /* stylelint-disable-next-line */
   & > .textFieldLabel {
-    height: calc(100% - 16px);
     top: 8px;
     left: 16px;
+    height: calc(100% - 16px);
 
     .textField:focus-within > & {
       height: 1lh;
@@ -114,10 +114,10 @@
   outline: none;
 
   &::before {
-    content: "";
-    outline: 1px solid var(--md-color-outline);
-    border-radius: 4px;
     height: 100%;
+    outline: 1px solid var(--md-color-outline);
+    content: "";
+    border-radius: 4px;
   }
 
   &:focus-within::before {
@@ -129,22 +129,25 @@
     outline-color: var(--md-color-error);
   }
 
+  /* stylelint-disable-next-line */
   &::before, .textFieldInput {
     grid-column: 1 / -1;
   }
 
+  /* stylelint-disable-next-line */
   & > .textFieldLabel {
-    height: auto;
-    background-color: var(--current-background-color);
-    padding-inline: 4px;
     top: 16px;
     left: calc(16px - 4px);
+    height: auto;
+    padding-inline: 4px;
+    background-color: var(--current-background-color);
 
     .textField:focus-within > &, &:has(+ .textFieldInput:not(:placeholder-shown)) {
       top: calc(0px - 0.5lh);
     }
   }
 
+  /* stylelint-disable-next-line */
   & > .textFieldIndicator {
     display: none;
   }

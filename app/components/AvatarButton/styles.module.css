@@ -1,21 +1,21 @@
 .avatarButton {
-  width: 40px;
-  height: 40px;
   position: relative;
   display: grid;
   place-items: center;
+  width: 40px;
+  height: 40px;
 
   &:focus-visible {
-    outline-color: var(--md-color-secondary);
     outline-width: 3px;
+    outline-color: var(--md-color-secondary);
     outline-offset: 2px;
   }
 
   &::after {
-    content: "";
     position: absolute;
     min-width: var(--minimum-target-size);
     min-height: var(--minimum-target-size);
+    content: "";
 
     --minimum-target-size: 48px;
   }
@@ -28,8 +28,8 @@
 .avatarButtonStateLayer {
   width: 100%;
   height: 100%;
-  border-radius: 50%;
   background-color: var(--md-color-on-surface);
+  border-radius: 50%;
   opacity: 0;
 
   .avatarButton:active > & {
@@ -38,6 +38,6 @@
 }
 
 .avatarButtonContentLayer {
-  border-radius: 50%;
   overflow: hidden;
+  border-radius: 50%;
 }
