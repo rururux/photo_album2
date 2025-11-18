@@ -110,7 +110,10 @@ export default function Welcome({ loaderData }: Route.ComponentProps) {
 
   const handleClick = () => dialogRef.current?.showModal()
   const handleClose = () => reset()
-  const handleCreateGroupSubmit = _handleSubmit(data => fetcher.submit(data, { method: "POST", encType: "application/json" }))
+  const handleCreateGroupSubmit = _handleSubmit(data => {
+    fetcher.submit({ action: "createGroup", name: data.name }, { method: "POST", encType: "application/json" })
+    dialogRef.current?.requestClose()
+  })
   const handleSetDefaultGroupSubmit = (groupId: number) => {
     return () => fetcher.submit({ action: "setDefaultGroup", groupId }, { method: "POST", encType: "application/json" })
   }
