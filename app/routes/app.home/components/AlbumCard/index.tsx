@@ -20,7 +20,7 @@ export function AlbumCard({ album, ...props }: AlbumCardProps) {
   return (
     <article {...mergedProps}>
       <ThumbGrid.Root className={styles.albumCardThumbnails}>
-        {album.photos.map(photo => (
+        {album.photos.slice(0, 4).map(photo => (
           <ThumbGrid.Item src={photo.src} alt="" key={photo.id} />
         ))}
       </ThumbGrid.Root>
