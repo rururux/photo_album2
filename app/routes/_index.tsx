@@ -1,17 +1,6 @@
-import type { Route } from "./+types/_index";
-import { Welcome } from "../welcome/welcome";
+import type { Route } from "./+types/_index"
+import { redirect } from "react-router"
 
-export function meta({}: Route.MetaArgs) {
-  return [
-    { title: "New React Router App" },
-    { name: "description", content: "Welcome to React Router!" },
-  ];
-}
-
-export function clientLoader({}: Route.ClientLoaderArgs) {
-  return { message: "test" }
-}
-
-export default function Home({ loaderData }: Route.ComponentProps) {
-  return <Welcome message={loaderData.message} />;
+export function loader({}: Route.ClientLoaderArgs) {
+  return redirect("/login")
 }
