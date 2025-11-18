@@ -6,11 +6,13 @@ export async function action({ request, context }: Route.ActionArgs) {
     throw data(null, { status: 405 })
   }
 
-  await context.auth.api.signUpEmail({
-    body: {
-      name: "Guest",
-      email: "email@example.com",
-      password: import.meta.env.VITE_GUEST_LOGIN_PASSWORD
-    }
-  })
+  context.cloudflare.ctx.waitUntil(
+    context.auth.api.signUpEmail({
+      body: {
+        name: "Guest",
+        email: "email@example.com",
+        password: import.meta.env.VITE_GUEST_LOGIN_PASSWORD
+      }
+    })
+  )
 }
