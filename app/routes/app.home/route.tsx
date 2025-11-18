@@ -4,11 +4,13 @@ import { Header } from "~/components/Header"
 import { Icon } from "~/components/Icon"
 import type { Route } from "./+types/route"
 import { AvatarButton } from "~/components/AvatarButton"
-import { redirect, useNavigate, useSubmit } from "react-router"
+import { data, redirect, useNavigate, useSubmit } from "react-router"
 import { AlbumApi } from "~/lib/api"
 import styles from "./styles.module.css"
 import { Avatar } from "~/components/Avatar"
 import { Menu } from "~/components/Menu"
+import * as v from "valibot"
+import { LogoutActionSchema } from "./schema"
 
 export async function loader({ request, context }: Route.LoaderArgs) {
   const session = await context.auth.api.getSession({ headers: request.headers })
@@ -28,6 +30,31 @@ export async function loader({ request, context }: Route.LoaderArgs) {
   return {
     user: session.user,
     albums
+  }
+}
+
+export async function action({ request, context }: Route.ActionArgs) {
+  const session = await context.auth.api.getSession({ headers: request.headers })
+
+  if (session === null) {
+    return
+  }
+
+  if (request.method.toUpperCase() !== "POST") {
+    throw data(null, { status: 405 })
+  }
+
+  const requestData = await request.json()
+  const result = v.safeParse(LogoutActionSchema, requestData)
+
+  if (result.success) {
+    const { headers } = await context.auth.api.revokeSession({
+      body: { token: session.session.token },
+      headers: request.headers,
+      returnHeaders: true
+    })
+
+    return redirect("/login", { headers })
   }
 }
 
