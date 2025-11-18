@@ -17,6 +17,7 @@ function getSocialProviders(options?: { clientSecret: string }) {
 }
 
 export const auth = betterAuth({
+  emailAndPassword: { enabled: true },
   database: drizzleAdapter(drizzle({} as D1Database), { provider: "sqlite" }),
   socialProviders: getSocialProviders(),
   user: {
@@ -28,6 +29,7 @@ export const auth = betterAuth({
 
 export function initAuth(db: DrizzleD1Database, oauthClientSecret: string) {
   return betterAuth({
+    emailAndPassword: { enabled: true },
     database: drizzleAdapter(db, { provider: "sqlite" }),
     socialProviders: getSocialProviders({ clientSecret: oauthClientSecret }),
     user: {
