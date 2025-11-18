@@ -167,7 +167,9 @@ async function deleteAllGuestData(db: AppLoadContext["db"], bucket: R2Bucket) {
     .filter(bucketKey => typeof bucketKey === "string")
     .filter(bucketKey => !initialPhotosHashSet.has(bucketKey))
 
-  await bucket.delete(bucketKeys)
+  if (bucketKeys.length > 0) {
+    await bucket.delete(bucketKeys)
+  }
 
   return guestUserId
 }
