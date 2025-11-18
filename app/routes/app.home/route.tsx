@@ -4,9 +4,11 @@ import { Header } from "~/components/Header"
 import { Icon } from "~/components/Icon"
 import type { Route } from "./+types/route"
 import { AvatarButton } from "~/components/AvatarButton"
-import { redirect, useNavigate } from "react-router"
+import { redirect, useNavigate, useSubmit } from "react-router"
 import { AlbumApi } from "~/lib/api"
 import styles from "./styles.module.css"
+import { Avatar } from "~/components/Avatar"
+import { Menu } from "~/components/Menu"
 
 export async function loader({ request, context }: Route.LoaderArgs) {
   const session = await context.auth.api.getSession({ headers: request.headers })
@@ -31,13 +33,28 @@ export async function loader({ request, context }: Route.LoaderArgs) {
 
 export default function Home({ loaderData }: Route.ComponentProps) {
   const navigate = useNavigate()
+  const submit = useSubmit()
+  const handleLogout = () => submit({ action: "logout" }, { method: "POST", encType: "application/json" })
 
   return (
     <div style={{ minHeight: "100vh" }}>
       <Header.Root>
         <Header.Title>MY Album</Header.Title>
         <Header.Trailing className={styles.homePageHeaderTrailing}>
-          <AvatarButton avatarSrc={loaderData.user.image!} />
+          <Menu.Root>
+            <Menu.Trigger>
+              {({ triggerButtonProps }) => (
+                <AvatarButton {...triggerButtonProps}>
+                  <Avatar name={loaderData.user.name} image={loaderData.user.image!} />
+                </AvatarButton>
+              )}
+            </Menu.Trigger>
+            <Menu.Popover>
+              <Menu.List>
+                <Menu.Item onAction={handleLogout}>ログアウト</Menu.Item>
+              </Menu.List>
+            </Menu.Popover>
+          </Menu.Root>
         </Header.Trailing>
       </Header.Root>
       <main>
