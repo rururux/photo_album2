@@ -11,7 +11,7 @@ import { useEffect, useMemo, useState } from "react"
 import { useHeader } from "~/components/Header/hooks"
 import type { Key } from "react-aria"
 import { useSelection } from "~/hooks/useSelection"
-import { data, redirect, useFetcher } from "react-router"
+import { data, redirect, useFetcher, useNavigate } from "react-router"
 import { valibotResolver } from "@hookform/resolvers/valibot"
 import { useForm } from "react-hook-form"
 import styles from "./styles.module.css"
@@ -232,6 +232,8 @@ export default function AlbumPage({ params, loaderData }: Route.ComponentProps) 
   const initialPageMode: PageMode = params.albumId === "create"? "create" : "view"
   const [ isEditable, setIsEditable ] = useState(initialPageMode === "create")
   const currentPageMode: PageMode = (initialPageMode === "view" && isEditable)? "edit" : initialPageMode
+  const navigate = useNavigate()
+
   const [ confirmDiscardDialogController, confirmDiscardDialogState ] = useDialog()
   const [ deleteAlbumConfirmDialogController, deleteAlbumConfirmDialogState ] = useDialog()
   const [ deletePhotoConfirmDialogController, deletePhotoConfirmDialogState ] = useDialog()
@@ -386,7 +388,11 @@ export default function AlbumPage({ params, loaderData }: Route.ComponentProps) 
   }, [ fetcher.formMethod, fetcher.data ])
 
   useEffect(() => {
-    reset()
+    reset({
+      album: loaderData.album,
+      newItems: [],
+      files: []
+    })
   }, [ reset, loaderData ])
 
   return (
@@ -415,7 +421,7 @@ export default function AlbumPage({ params, loaderData }: Route.ComponentProps) 
                     <Icon icon="close" />
                   </IconButton>
                 ) : (
-                  <IconButton size="small">
+                  <IconButton size="small" onClick={() => navigate(-1)}>
                     <Icon icon="arrow-back" />
                   </IconButton>
                 )}
@@ -427,7 +433,7 @@ export default function AlbumPage({ params, loaderData }: Route.ComponentProps) 
               </Header.Title>
               <Header.Trailing>
               {isEditable? (
-                <Button onClick={handleFormSubmitButtonClick}>保存</Button>
+                <Button disabled={!isDirty || fetcher.state !== "idle"} onClick={handleFormSubmitButtonClick}>保存</Button>
               ) : (
                 <Menu.Root>
                   <Menu.Trigger>
