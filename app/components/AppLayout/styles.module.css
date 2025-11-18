@@ -6,4 +6,5 @@
   max-width: 450px;
   margin-inline: auto;
   background-color: var(--md-color-background);
+  anchor-name: --layout-anchor;
 }
