@@ -1,5 +1,6 @@
 .icon {
   width: var(--icon-size, 24px);
   height: var(--icon-size, 24px);
+  /* stylelint-disable-next-line */
   fill: currentColor;
 }

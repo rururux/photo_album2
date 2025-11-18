@@ -3,32 +3,34 @@
 }
 
 .menuPopover {
+  /* stylelint-disable-next-line declaration-property-value-no-unknown */
   top: anchor(--anchor-id top);
-  left: auto;
+  /* stylelint-disable-next-line declaration-property-value-no-unknown */
   right: anchor(--anchor-id right);
+  left: auto;
 }
 
 .menuList {
   min-width: 112px;
+  padding-block: 8px;
   background-color: var(--md-color-surface-container);
   border-radius: 4px;
-  padding-block: 8px;
 }
 
 .menuListItem {
-  color: var(--md-color-on-surface);
-  height: 48px;
-  padding-inline: 12px;
+  position: relative;
   display: flex;
   align-items: center;
-  position: relative;
+  height: 48px;
+  padding-inline: 12px;
+  color: var(--md-color-on-surface);
   cursor: pointer;
 
   &[data-hovered]::before {
-    content: "";
     position: absolute;
     inset: 0;
-    background-color: rgb(from var(--md-color-on-surface) r g b / 0.08);
+    content: "";
+    background-color: rgb(from var(--md-color-on-surface) r g b / 8%);
   }
 
   &:focus-visible, &[data-focus-visible] {

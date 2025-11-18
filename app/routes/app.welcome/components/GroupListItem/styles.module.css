@@ -1,21 +1,21 @@
 .groupListItem {
   height: 72px;
+  overflow: hidden;
   border: 1px solid var(--md-color-outline-variant);
   border-radius: 12px;
-  overflow: hidden;
 }
 
 .groupListItemBody {
-  width: 100%;
-  height: 100%;
   display: flex;
   gap: 8px;
+  width: 100%;
+  height: 100%;
 }
 
 .groupListItemThumb {
   aspect-ratio: 1 / 1;
-  border-radius: 12px;
   overflow: hidden;
+  border-radius: 12px;
 }
 
 .groupListItemThumbImage {
@@ -25,12 +25,12 @@
 }
 
 .groupListItemContent {
-  flex-grow: 1;
-  align-items: start;
-  align-self: center;
   display: flex;
+  flex-grow: 1;
   flex-direction: column;
   gap: 4px;
+  align-items: start;
+  align-self: center;
 }
 
 .groupListItemUserIcon {

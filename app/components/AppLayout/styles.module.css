@@ -1,4 +1,5 @@
 .layoutBackground {
+  /* stylelint-disable-next-line */
   background-color: rgb(from black r g b / 0.6);
 }
 
