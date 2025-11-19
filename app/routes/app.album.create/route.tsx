@@ -4,7 +4,7 @@ import styles from "./styles.module.css"
 import { IconButton } from "~/components/IconButton"
 import { Icon } from "~/components/Icon"
 import { Button } from "~/components/Button"
-import { data, redirect, useFetcher } from "react-router"
+import { data, replace, useFetcher } from "react-router"
 import { useEffect, useId, useRef } from "react"
 import { useForm } from "react-hook-form"
 import getFileHash from "~/utils/getFileHash"
@@ -128,7 +128,7 @@ export async function action({ request, context }: Route.ActionArgs) {
 
     await Promise.all(r2PutPromises)
 
-    return redirect("/app/album/" + encodeAlbumId(createdAlbumId!))
+    return replace("/app/album/" + encodeAlbumId(createdAlbumId!))
   } catch (e) {
     if (v.isValiError(e)) {
       await cleanUp()
