@@ -4,7 +4,7 @@ import styles from "./styles.module.css"
 import { IconButton } from "~/components/IconButton"
 import { Icon } from "~/components/Icon"
 import { Button } from "~/components/Button"
-import { data, useFetcher } from "react-router"
+import { data, redirect, useFetcher } from "react-router"
 import { useEffect, useId, useRef } from "react"
 import { useForm } from "react-hook-form"
 import getFileHash from "~/utils/getFileHash"
@@ -24,6 +24,7 @@ import * as v from "valibot"
 import schemas from "workers/lib/db/schema"
 import { eq } from "drizzle-orm"
 import type { BatchItem } from "drizzle-orm/batch"
+import { encodeAlbumId } from "~/utils/sqids"
 
 const tenMbSize = 1024 * 1024 * 10
 
@@ -127,7 +128,7 @@ export async function action({ request, context }: Route.ActionArgs) {
 
     await Promise.all(r2PutPromises)
 
-    return { success: true }
+    return redirect("/app/album/" + encodeAlbumId(createdAlbumId!))
   } catch (e) {
     if (v.isValiError(e)) {
       await cleanUp()
