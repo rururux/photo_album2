@@ -281,7 +281,7 @@ export default function CreateAlbumPage() {
         <form id={formId} onSubmit={handleFormSubmit} ref={formRef}>
           <div>
             <ThumbGrid.Root>
-              {newItems.map(item => (
+              {newItems.slice(0, 4).map(item => (
                 <ThumbGrid.Item src={item.src} alt="" key={item.fileHash} />
               ))}
             </ThumbGrid.Root>
