@@ -1,7 +1,7 @@
 .dialogRoot {
   place-self: center;
   min-width: 280px;
-  max-width: 560px;
+  max-width: min(560px, calc(100% - 40px));
   background-color: var(--md-color-surface-container-high);
   border-radius: 28px;
 
