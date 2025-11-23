@@ -3,6 +3,7 @@ import { createRequestHandler } from "react-router";
 import schemas from "./lib/db/schema"
 import { drizzle } from "drizzle-orm/d1"
 import { resetGuestData } from "./lib/db/reset"
+import { createAlbumApi, type AlbumApi } from "~/lib/api"
 
 declare module "react-router" {
   export interface AppLoadContext {
@@ -11,7 +12,8 @@ declare module "react-router" {
       ctx: ExecutionContext;
     };
     auth: ReturnType<typeof initAuth>,
-    db: ReturnType<typeof initDrizzle>
+    db: ReturnType<typeof initDrizzle>,
+    albumApi: AlbumApi
   }
 }
 
@@ -30,7 +32,7 @@ let dbCache: ReturnType<typeof initDrizzle> | null = null
 export default {
   async fetch(request, env, ctx) {
     const db = initDrizzle(env.DB)
-    return requestHandler(request, {
+    const context = {
       cloudflare: { env, ctx },
       get auth() {
         // @ts-expect-error OMG
@@ -42,6 +44,14 @@ export default {
         dbCache ??= initDrizzle(env.DB)
 
         return dbCache
+      }
+    }
+
+    return requestHandler(request, {
+      ...context,
+      get albumApi() {
+        // @ts-expect-error なんか知らんが Omit が効かん
+        return createAlbumApi(context)
       }
     });
   },

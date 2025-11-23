@@ -14,6 +14,6 @@ export const AlbumWithPhotosSchema = v.object({
   photos: v.array(PhotoSchema)
 })
 
-export type AlbumSchemaType = v.InferInput<typeof AlbumSchema>
-export type PhotoSchemaType = v.InferInput<typeof PhotoSchema>
-export type AlbumWithPhotosSchemaSchemaType = v.InferInput<typeof AlbumWithPhotosSchema>
+export type AlbumSchemaType = v.InferOutput<typeof AlbumSchema>
+export type PhotoSchemaType = v.InferOutput<typeof PhotoSchema>
+export type AlbumWithPhotosSchemaType = v.InferOutput<typeof AlbumWithPhotosSchema>

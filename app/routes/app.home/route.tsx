@@ -5,7 +5,6 @@ import { Icon } from "~/components/Icon"
 import type { Route } from "./+types/route"
 import { AvatarButton } from "~/components/AvatarButton"
 import { data, redirect, useNavigate, useSubmit } from "react-router"
-import { AlbumApi } from "~/lib/api"
 import styles from "./styles.module.css"
 import { Avatar } from "~/components/Avatar"
 import { Menu } from "~/components/Menu"
@@ -24,8 +23,7 @@ export async function loader({ request, context }: Route.LoaderArgs) {
     return redirect("/app/welcome")
   }
 
-  const albumApi = new AlbumApi(context)
-  const albums = await albumApi.getAlbumsByGroup(defaultGroup)
+  const albums = await context.albumApi.getAlbumsByGroup(defaultGroup)
 
   return {
     user: session.user,

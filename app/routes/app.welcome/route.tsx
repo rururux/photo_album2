@@ -1,6 +1,5 @@
 import { redirect, useFetcher } from "react-router"
 import type { Route } from "./+types/route"
-import schemas from "workers/lib/db/schema"
 import { GroupListItem } from "./components/GroupListItem"
 import { Header } from "~/components/Header"
 import { useRef } from "react"
@@ -12,7 +11,6 @@ import styles from "./styles.module.css"
 import { CreateGroupDialog } from "./components/CreateGroupDialog"
 import { CreateGroupFormSchema, RouteActionSchema } from "./schema"
 import { UserSchema } from "~/lib/schema"
-import { AlbumApi } from "~/lib/api"
 import { Avatar } from "~/components/Avatar"
 
 export async function loader({ request, context }: Route.LoaderArgs) {
@@ -24,27 +22,7 @@ export async function loader({ request, context }: Route.LoaderArgs) {
     return redirect("/app/home")
   }
 
-  const usersToGroups = await context.db.query.usersToGroups.findMany({
-    where: (table, { eq }) => eq(table.userId, session.user.id),
-    with: {
-      group: {
-        with: {
-          usersToGroups: {
-            with: { user: true }
-          },
-          albums: {
-            with: { photos: true }
-          }
-        }
-      }
-    }
-  })
-  const groups = usersToGroups.map(usersToGroup => ({
-    id: usersToGroup.group.id,
-    name: usersToGroup.group.name,
-    albums: usersToGroup.group.albums,
-    users: usersToGroup.group.usersToGroups.map(usersToGroups => v.parse(UserSchema, usersToGroups.user))
-  }))
+  const groups = await context.albumApi.getGroupsByUser(session.user.id)
   const userData = v.parse(UserSchema, session.user)
 
   return {
@@ -60,7 +38,7 @@ export async function action({ request, context }: Route.ActionArgs) {
     return redirect("/login")
   }
 
-  const albumApi = new AlbumApi(context)
+  const albumApi = context.albumApi
 
   switch (request.method) {
     case "POST": {
@@ -73,9 +51,9 @@ export async function action({ request, context }: Route.ActionArgs) {
       }
 
       if (parseResult.output.action === "createGroup") {
-        const [ newGroup ] = await context.db.insert(schemas.groups).values({ name: parseResult.output.name }).returning()
+        const { createdGroupId } = await albumApi.createGroup(parseResult.output.name)
 
-        await context.db.insert(schemas.usersToGroups).values({ userId: session.user.id, groupId: newGroup.id })
+        await albumApi.addUserToGroup(createdGroupId, session.user.id)
       } else if (parseResult.output.action === "setDefaultGroup") {
         const newDefaultGroupId = parseResult.output.groupId
         const isGroupMember = await albumApi.isGroupMember(session.user.id, newDefaultGroupId)

@@ -1,7 +1,7 @@
 import type { AppLoadContext } from "react-router"
 import * as v from "valibot"
 import { AlbumInsertSchema, AlbumUpdateSchema, PhotoInsertSchema, UserSchema } from "./schema"
-import { AlbumWithPhotosSchema } from "~/schemas/album"
+import { AlbumWithPhotosSchema, type AlbumSchemaType, type AlbumWithPhotosSchemaType, type PhotoSchemaType } from "~/schemas/album"
 import schemas from "workers/lib/db/schema"
 import { decodeAlbumId, decodePhotoId, encodeAlbumId } from "~/utils/sqids"
 import { and, eq, inArray } from "drizzle-orm"
@@ -26,154 +26,196 @@ const initialPhotosHash = [
 ]
 const initialPhotosHashSet = new Set(initialPhotosHash)
 
-export class AlbumApi {
-  #context: AppLoadContext
+type FileData = {
+    fileHash: string;
+    fileSize: number;
+}
 
-  constructor(
-    context: AppLoadContext,
-  ) {
-    this.#context = context
-  }
+export interface AlbumApi {
+  getGroupsByUser(userId: string): Promise<{ id: number, name: string, albums: AlbumWithPhotosSchemaType[], users: v.InferOutput<typeof UserSchema>[] }[]>
+  getAlbumsByGroup(groupId: number): Promise<AlbumWithPhotosSchemaType[]>
+  isGroupMember(userId: string, groupId: number): Promise<boolean>
+  canUserAccessAlbum(userId: string, albumId: string): Promise<boolean>
+  createGroup(groupName: string): Promise<{ createdGroupId: number }>
+  addUserToGroup(groupId: number, userId: string): Promise<void>
+  getAlbum(albumId: string): Promise<{ album: AlbumSchemaType, photos: PhotoSchemaType[] } | null>
+  createAlbum(groupId: number, albumData: unknown): Promise<{ createdAlbumId: string }>
+  updateAlbum(albumId: string, updateData: unknown): Promise<void>
+  deleteAlbum(albumId: string): Promise<void>
+  createPhotos(albumId: string, newPhotoDatas: unknown[]): Promise<{ createdPhotoIds: number[], fileDatas: FileData[] }>
+  deletePhotos(albumId: string, photoIds: string[]): Promise<void>
+}
 
-  async getGroupsByUser(userId: string) {
-    const usersToGroups = await this.#context.db.query.usersToGroups.findMany({
-      where: (table, { eq }) => eq(table.userId, userId),
-      with: {
-        group: {
-          with: {
-            usersToGroups: {
-              with: { user: true }
-            },
-            albums: {
-              with: { photos: true }
-            }
-          }
-        }
-      }
-    })
-    const groups = usersToGroups.map(usersToGroup => ({
-      id: usersToGroup.group.id,
-      name: usersToGroup.group.name,
-      albums: usersToGroup.group.albums,
-      users: usersToGroup.group.usersToGroups.map(usersToGroups => v.parse(UserSchema, usersToGroups.user))
-    }))
-
-    return groups
-  }
-
-  async getAlbumsByGroup(groupId: number) {
-    const group = await this.#context.db.query.groups.findFirst({
-      where: (t, { eq }) => eq(t.id, groupId),
-      with: {
-        albums: {
-          with: { photos: true },
-          orderBy: (t, { desc }) => [ desc(t.startDate), desc(t.endDate) ]
-        }
-      }
-    })
-    const transformed = v.parse(v.array(AlbumWithPhotosSchema), group?.albums)
-
-    return transformed
-  }
-
-  async isGroupMember(userId: string, groupId: number) {
-    const usersToGroups = await this.#context.db.query.usersToGroups.findFirst({
-      where: (t, { and, eq }) => and(eq(t.userId, userId), eq(t.groupId, groupId))
-    })
-
-    return usersToGroups !== undefined
-  }
-
-  async canUserAccessAlbum(userId: string, albumId: string) {
-    const decodedAlbumId = decodeAlbumId(albumId)
-    const result = await this.#context.db.select()
-      .from(schemas.usersToGroups)
-      .leftJoin(schemas.user, eq(schemas.usersToGroups.userId, schemas.user.id))
-      .leftJoin(schemas.albums, eq(schemas.usersToGroups.groupId, schemas.albums.groupId))
-      .where(and(eq(schemas.user.id, userId), eq(schemas.albums.id, decodedAlbumId)))
-
-    return result.length !== 0
-  }
-
-  async createAlbum(groupId: number, albumData: unknown) {
-    const parsedNewAlbumData = v.parse(AlbumInsertSchema, albumData)
-    const [{ id: createdAlbumId }] = await this.#context.db
-      .insert(schemas.albums)
-      .values({ groupId,  ...parsedNewAlbumData })
-      .returning({ id: schemas.albums.id })
-
-    return { createdAlbumId: encodeAlbumId(createdAlbumId)}
-  }
-
-  async updateAlbum(albumId: string, updateData: unknown) {
-    const decodedAlbumId = decodeAlbumId(albumId)
-    const parsedUpdateData = v.parse(AlbumUpdateSchema, updateData)
-
-    await this.#context.db
-      .update(schemas.albums)
-      .set(parsedUpdateData)
-      .where(eq(schemas.albums.id, decodedAlbumId))
-  }
-
-  async deleteAlbum(albumId: string) {
-    const decodedAlbumId = decodeAlbumId(albumId)
-
-    const [ returning ] = await this.#context.db.batch([
-      this.#context.db
-        .delete(schemas.photos)
-        .where(eq(schemas.photos.albumId, decodedAlbumId))
-        .returning({ deletedPhotoSrc: schemas.photos.src }),
-      this.#context.db.delete(schemas.albums).where(eq(schemas.albums.id, decodedAlbumId))
-    ])
-    const deletedPhotoSrcs = returning.map(({ deletedPhotoSrc }) => deletedPhotoSrc)
-
-    this.#context.cloudflare.ctx.waitUntil(
-      this.cleanUpDeletedPhotos(deletedPhotoSrcs)
-    )
-  }
-
-  async createPhotos(albumId: string, newPhotoDatas: unknown[]) {
-    const decodedAlbumId = decodeAlbumId(albumId)
-    const parsedNewItemDatas = newPhotoDatas.map(newPhoto => v.parse(PhotoInsertSchema, newPhoto))
-    const insertValues = parsedNewItemDatas.map(item => ({
-      albumId: decodedAlbumId,
-      src: `/photo/${item.fileHash}`,
-      date: new Date(item.date)
-    }))
-
-    const insertResult = await this.#context.db
-      .insert(schemas.photos)
-      .values(insertValues)
-      .returning({ id: schemas.photos.id })
-    const createdPhotoIds = insertResult.map(returning => returning.id)
-    const fileDatas = parsedNewItemDatas.map(newPhotoData => ({ fileHash: newPhotoData.fileHash, fileSize: newPhotoData.fileSize }))
-
-    return { createdPhotoIds, fileDatas }
-  }
-
-  async deletePhotos(albumId: string, photoIds: string[]) {
-    const decodedAlbumId = decodeAlbumId(albumId)
-    const decodedPhotoIds = photoIds.map(photoId => decodePhotoId(photoId))
-
-    const returning = await this.#context.db
-      .delete(schemas.photos)
-      .where(
-        and(inArray(schemas.photos.id, decodedPhotoIds), eq(schemas.photos.albumId, decodedAlbumId))
-      )
-      .returning({ deletedPhotoSrc: schemas.photos.src })
-    const deletedPhotoSrcs = returning.map(({ deletedPhotoSrc }) => deletedPhotoSrc)
-
-    this.#context.cloudflare.ctx.waitUntil(
-      this.cleanUpDeletedPhotos(deletedPhotoSrcs)
-    )
-  }
-
-  async cleanUpDeletedPhotos(deletedPhotoSrcs: string[]) {
+export function createAlbumApi(context: AppLoadContext) {
+  const cleanUpDeletedPhotos = async (deletedPhotoSrcs: string[]) => {
     const bucketKeys = deletedPhotoSrcs
       .map(deletedPhotoSrc => deletedPhotoSrc.match(/[^/]+$/)?.at(0))
       .filter(bucketKey => typeof bucketKey === "string")
       .filter(bucketKey => !initialPhotosHashSet.has(bucketKey))
 
-    await this.#context.cloudflare.env.BUCKET.delete(bucketKeys)
+    await context.cloudflare.env.BUCKET.delete(bucketKeys)
   }
+
+  return {
+    async getGroupsByUser(userId: string) {
+      const usersToGroups = await context.db.query.usersToGroups.findMany({
+        where: (table, { eq }) => eq(table.userId, userId),
+        with: {
+          group: {
+            with: {
+              usersToGroups: {
+                with: { user: true }
+              },
+              albums: {
+                with: { photos: true }
+              }
+            }
+          }
+        }
+      })
+      const groups = usersToGroups.map(usersToGroup => ({
+        id: usersToGroup.group.id,
+        name: usersToGroup.group.name,
+        albums: usersToGroup.group.albums.map(album => v.parse(AlbumWithPhotosSchema, album)),
+        users: usersToGroup.group.usersToGroups.map(usersToGroups => v.parse(UserSchema, usersToGroups.user))
+      }))
+
+      return groups
+    },
+
+    async getAlbumsByGroup(groupId: number) {
+      const group = await context.db.query.groups.findFirst({
+        where: (t, { eq }) => eq(t.id, groupId),
+        with: {
+          albums: {
+            with: { photos: true },
+            orderBy: (t, { desc }) => [ desc(t.startDate), desc(t.endDate) ]
+          }
+        }
+      })
+      const transformed = v.parse(v.array(AlbumWithPhotosSchema), group?.albums)
+
+      return transformed
+    },
+
+    async isGroupMember(userId: string, groupId: number) {
+      const usersToGroups = await context.db.query.usersToGroups.findFirst({
+        where: (t, { and, eq }) => and(eq(t.userId, userId), eq(t.groupId, groupId))
+      })
+
+      return usersToGroups !== undefined
+    },
+
+    async canUserAccessAlbum(userId: string, albumId: string) {
+      const decodedAlbumId = decodeAlbumId(albumId)
+      const result = await context.db.select()
+        .from(schemas.usersToGroups)
+        .leftJoin(schemas.user, eq(schemas.usersToGroups.userId, schemas.user.id))
+        .leftJoin(schemas.albums, eq(schemas.usersToGroups.groupId, schemas.albums.groupId))
+        .where(and(eq(schemas.user.id, userId), eq(schemas.albums.id, decodedAlbumId)))
+
+      return result.length !== 0
+    },
+
+    async createGroup(groupName: string) {
+      const [ result ] = await context.db.insert(schemas.groups).values({ name: groupName }).returning({ createdGroupId: schemas.groups.id })
+
+      return result
+    },
+
+    async addUserToGroup(groupId: number, userId: string) {
+      await context.db.insert(schemas.usersToGroups).values({ userId, groupId })
+    },
+
+    async getAlbum(albumId: string) {
+      const decodedAlbumId = decodeAlbumId(albumId)
+      const albumWithPhotos = await context.db.query.albums.findFirst({
+        where: (t, { eq }) => eq(t.id, decodedAlbumId),
+        with: { photos: true }
+      })
+
+      if (albumWithPhotos === undefined) {
+        return null
+      }
+
+      const { photos, ...album } = v.parse(AlbumWithPhotosSchema, albumWithPhotos)
+
+      return {
+        album, photos
+      }
+    },
+
+    async createAlbum(groupId: number, albumData: unknown) {
+      const parsedNewAlbumData = v.parse(AlbumInsertSchema, albumData)
+      const [{ id: createdAlbumId }] = await context.db
+        .insert(schemas.albums)
+        .values({ groupId,  ...parsedNewAlbumData })
+        .returning({ id: schemas.albums.id })
+
+      return { createdAlbumId: encodeAlbumId(createdAlbumId)}
+    },
+
+    async updateAlbum(albumId: string, updateData: unknown) {
+      const decodedAlbumId = decodeAlbumId(albumId)
+      const parsedUpdateData = v.parse(AlbumUpdateSchema, updateData)
+
+      await context.db
+        .update(schemas.albums)
+        .set(parsedUpdateData)
+        .where(eq(schemas.albums.id, decodedAlbumId))
+    },
+
+    async deleteAlbum(albumId: string) {
+      const decodedAlbumId = decodeAlbumId(albumId)
+
+      const [ returning ] = await context.db.batch([
+        context.db
+          .delete(schemas.photos)
+          .where(eq(schemas.photos.albumId, decodedAlbumId))
+          .returning({ deletedPhotoSrc: schemas.photos.src }),
+        context.db.delete(schemas.albums).where(eq(schemas.albums.id, decodedAlbumId))
+      ])
+      const deletedPhotoSrcs = returning.map(({ deletedPhotoSrc }) => deletedPhotoSrc)
+
+      context.cloudflare.ctx.waitUntil(
+        cleanUpDeletedPhotos(deletedPhotoSrcs)
+      )
+    },
+
+    async createPhotos(albumId: string, newPhotoDatas: unknown[]) {
+      const decodedAlbumId = decodeAlbumId(albumId)
+      const parsedNewItemDatas = newPhotoDatas.map(newPhoto => v.parse(PhotoInsertSchema, newPhoto))
+      const insertValues = parsedNewItemDatas.map(item => ({
+        albumId: decodedAlbumId,
+        src: `/photo/${item.fileHash}`,
+        date: new Date(item.date)
+      }))
+
+      const insertResult = await context.db
+        .insert(schemas.photos)
+        .values(insertValues)
+        .returning({ id: schemas.photos.id })
+      const createdPhotoIds = insertResult.map(returning => returning.id)
+      const fileDatas = parsedNewItemDatas.map(newPhotoData => ({ fileHash: newPhotoData.fileHash, fileSize: newPhotoData.fileSize }))
+
+      return { createdPhotoIds, fileDatas }
+    },
+
+    async deletePhotos(albumId: string, photoIds: string[]) {
+      const decodedAlbumId = decodeAlbumId(albumId)
+      const decodedPhotoIds = photoIds.map(photoId => decodePhotoId(photoId))
+
+      const returning = await context.db
+        .delete(schemas.photos)
+        .where(
+          and(inArray(schemas.photos.id, decodedPhotoIds), eq(schemas.photos.albumId, decodedAlbumId))
+        )
+        .returning({ deletedPhotoSrc: schemas.photos.src })
+      const deletedPhotoSrcs = returning.map(({ deletedPhotoSrc }) => deletedPhotoSrc)
+
+      context.cloudflare.ctx.waitUntil(
+        cleanUpDeletedPhotos(deletedPhotoSrcs)
+      )
+    }
+  } satisfies AlbumApi
 }
