@@ -1,7 +1,7 @@
 import { describe, expect, test } from "vitest"
 import { render } from "vitest-browser-react"
-import { AlbumCard } from "."
 import { createRoutesStub } from "react-router"
+import { AlbumCard } from "."
 
 const dummyAlbum = {
   id: "test",

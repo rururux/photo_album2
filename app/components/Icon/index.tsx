@@ -1,6 +1,6 @@
 import type { HTMLAttributes } from "react"
-import styles from "./styles.module.css"
 import { mergeProps } from "react-aria"
+import styles from "./styles.module.css"
 
 type IconProps = Omit<HTMLAttributes<SVGElement>, "children"> & {
   icon: "arrow-back" | "add" | "edit-calendar" | "close" | "check" | "delete" | "more"

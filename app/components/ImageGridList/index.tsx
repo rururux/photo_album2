@@ -1,7 +1,7 @@
 import { Checkbox, GridList, GridListItem, type GridListItemProps, type GridListProps, type Key } from "react-aria-components"
-import styles from "./styles.module.css"
-import { Icon } from "../Icon"
 import { mergeProps } from "react-aria"
+import { Icon } from "../Icon"
+import styles from "./styles.module.css"
 
 export const ImageGridList = {
   Root, Item

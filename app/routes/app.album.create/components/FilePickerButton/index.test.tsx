@@ -1,7 +1,7 @@
 import { describe, expect, test, vi } from "vitest"
 import { render } from "vitest-browser-react"
-import { FilePickerButton } from "."
 import { page } from "vitest/browser"
+import { FilePickerButton } from "."
 
 describe("FilePickerButton", () => {
   test("render", async () => {

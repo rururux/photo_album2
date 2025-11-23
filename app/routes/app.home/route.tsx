@@ -1,15 +1,15 @@
-import { FloatingActionButton } from "~/components/FloatingActionButton"
+import { data, redirect, useNavigate, useSubmit } from "react-router"
+import * as v from "valibot"
 import { AlbumCard } from "./components/AlbumCard"
+import type { Route } from "./+types/route"
+import styles from "./styles.module.css"
+import { LogoutActionSchema } from "./schema"
+import { FloatingActionButton } from "~/components/FloatingActionButton"
 import { Header } from "~/components/Header"
 import { Icon } from "~/components/Icon"
-import type { Route } from "./+types/route"
 import { AvatarButton } from "~/components/AvatarButton"
-import { data, redirect, useNavigate, useSubmit } from "react-router"
-import styles from "./styles.module.css"
 import { Avatar } from "~/components/Avatar"
 import { Menu } from "~/components/Menu"
-import * as v from "valibot"
-import { LogoutActionSchema } from "./schema"
 
 export async function loader({ request, context }: Route.LoaderArgs) {
   const session = await context.auth.api.getSession({ headers: request.headers })

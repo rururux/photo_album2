@@ -1,6 +1,6 @@
 import { mergeProps } from "react-aria"
-import styles from "./styles.module.css"
 import type { DialogHTMLAttributes, HTMLAttributes, MouseEventHandler, RefObject } from "react"
+import styles from "./styles.module.css"
 
 export const Dialog = {
   Root, Body, Header, Title, Content, Footer

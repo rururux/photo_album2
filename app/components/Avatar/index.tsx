@@ -1,6 +1,6 @@
 import { mergeProps } from "react-aria"
-import styles from "./styles.module.css"
 import type { HTMLAttributes } from "react"
+import styles from "./styles.module.css"
 
 type AvatarProps = HTMLAttributes<HTMLDivElement> & { name: string, image?: string | undefined }
 

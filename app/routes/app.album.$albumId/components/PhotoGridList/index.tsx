@@ -1,6 +1,6 @@
-import { ImageGridList } from "~/components/ImageGridList"
-import styles from "./styles.module.css"
 import type { Key } from "react-aria"
+import styles from "./styles.module.css"
+import { ImageGridList } from "~/components/ImageGridList"
 
 type PhotoGridListProps = {
   photoItems: { id: string, src: string }[],

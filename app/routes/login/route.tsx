@@ -1,9 +1,9 @@
-import { authClient } from "~/lib/auth"
+import { data, redirect, useSubmit } from "react-router"
 import type { Route } from "./+types/route"
 import { LineLoginButton } from "./components/LineLoginButton"
 import styles from "./styles.module.css"
+import { authClient } from "~/lib/auth"
 import { Button } from "~/components/Button"
-import { data, redirect, useSubmit } from "react-router"
 
 export async function loader({ request, context }: Route.LoaderArgs) {
   const session = await context.auth.api.getSession({ headers: request.headers })

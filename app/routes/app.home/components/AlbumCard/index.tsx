@@ -1,9 +1,9 @@
 import type { HTMLAttributes } from "react"
 import { mergeProps } from "react-aria"
+import { Link } from "react-router"
 import styles from "./styles.module.css"
 import { ThumbGrid } from "~/components/ThumbGrid"
 import type { AlbumWithPhotosSchemaType } from "~/schemas/album"
-import { Link } from "react-router"
 import formatRelativeDate from "~/utils/formatRelativeDate"
 import now from "~/utils/now"
 

@@ -1,9 +1,9 @@
-import { IconButton } from "~/components/IconButton"
+import type { ChangeEvent } from "react"
 import styles from "./styles.module.css"
+import { IconButton } from "~/components/IconButton"
 import { Icon } from "~/components/Icon"
 import formatRelativeDate from "~/utils/formatRelativeDate"
 import now from "~/utils/now"
-import type { ChangeEvent } from "react"
 
 type AlbumInfoProps = {
   album: { name: string, startDate: string, endDate: string }

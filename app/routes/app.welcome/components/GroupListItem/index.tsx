@@ -1,5 +1,5 @@
-import { DummyImage } from "~/components/DummyImage"
 import styles from "./styles.module.css"
+import { DummyImage } from "~/components/DummyImage"
 import type { UserSchemaType } from "~/lib/schema"
 import { Avatar } from "~/components/Avatar"
 

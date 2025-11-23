@@ -1,15 +1,15 @@
 import { Activity, cloneElement, createContext, useContext, useEffect, useEffectEvent, useLayoutEffect, useMemo, useRef, useState, type PropsWithChildren, type RefObject } from "react"
-import styles from "./styles.module.css"
+import { useVirtualizer, type VirtualItem } from "@tanstack/react-virtual"
+import { CalendarCell, CalendarGrid, RangeCalendarStateContext, RangeCalendar as RARangeCalendar, type CalendarGridBodyProps, type DateRange, type RangeCalendarState } from "react-aria-components"
+import { CalendarDate, endOfMonth, GregorianCalendar, parseDate, startOfMonth, type CalendarIdentifier, type DateDuration } from "@internationalized/date"
 import { Divider } from "../Divider"
 import { Button } from "../Button"
-import { useVirtualizer, type VirtualItem } from "@tanstack/react-virtual"
 import { IconButton } from "../IconButton"
 import { Icon } from "../Icon"
+import styles from "./styles.module.css"
 import formatRelativeDate from "~/utils/formatRelativeDate"
 import now from "~/utils/now"
 import isSameYear from "~/utils/isSameYear"
-import { CalendarCell, CalendarGrid, RangeCalendarStateContext, RangeCalendar as RARangeCalendar, type CalendarGridBodyProps, type DateRange, type RangeCalendarState } from "react-aria-components"
-import { CalendarDate, endOfMonth, GregorianCalendar, parseDate, startOfMonth, type CalendarIdentifier, type DateDuration } from "@internationalized/date"
 
 const fiveYearMonths = 5 * 12
 const nowDate = parseDate("2025-11-09")
