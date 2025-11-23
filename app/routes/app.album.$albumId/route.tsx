@@ -26,7 +26,6 @@ import { Menu } from "~/components/Menu"
 import { Dialog } from "~/components/Dialog"
 import { useCloseWatcher } from "~/hooks/useCloseWatcher"
 import { useDialog } from "~/components/Dialog/hooks"
-import { AlbumApi } from "~/lib/api"
 import { pickDirtyfields } from "~/utils/pickDirtyFields"
 import { parseMultipartRequest } from "@remix-run/multipart-parser"
 
@@ -40,8 +39,7 @@ export async function loader({ request, params, context }: Route.LoaderArgs) {
   }
 
   if (params.albumId !== "create") {
-    const albumApi = new AlbumApi(context)
-    const hasPermission = await albumApi.canUserAccessAlbum(session.user.id, params.albumId)
+    const hasPermission = await context.albumApi.canUserAccessAlbum(session.user.id, params.albumId)
 
     if (hasPermission !== true) {
       return redirect("/app/home")
@@ -72,7 +70,7 @@ export async function action({ request, params: { albumId }, context }: Route.Ac
     return data(null, { status: 401 })
   }
 
-  const albumApi = new AlbumApi(context)
+  const albumApi = context.albumApi
   const method = request.method
 
   if (method === "POST") {
