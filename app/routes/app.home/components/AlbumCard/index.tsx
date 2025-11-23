@@ -2,13 +2,13 @@ import type { HTMLAttributes } from "react"
 import { mergeProps } from "react-aria"
 import styles from "./styles.module.css"
 import { ThumbGrid } from "~/components/ThumbGrid"
-import type { AlbumWithPhotosSchemaSchemaType } from "~/schemas/album"
+import type { AlbumWithPhotosSchemaType } from "~/schemas/album"
 import { Link } from "react-router"
 import formatRelativeDate from "~/utils/formatRelativeDate"
 import now from "~/utils/now"
 
 type AlbumCardProps =  HTMLAttributes<HTMLElement> & {
-  album: AlbumWithPhotosSchemaSchemaType
+  album: AlbumWithPhotosSchemaType
 }
 
 export function AlbumCard({ album, ...props }: AlbumCardProps) {
