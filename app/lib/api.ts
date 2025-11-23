@@ -1,7 +1,7 @@
 import type { AppLoadContext } from "react-router"
 import * as v from "valibot"
 import { AlbumInsertSchema, AlbumUpdateSchema, PhotoInsertSchema, UserSchema } from "./schema"
-import { AlbumWithPhotosSchema, type AlbumWithPhotosSchemaType } from "~/schemas/album"
+import { AlbumWithPhotosSchema, type AlbumSchemaType, type AlbumWithPhotosSchemaType, type PhotoSchemaType } from "~/schemas/album"
 import schemas from "workers/lib/db/schema"
 import { decodeAlbumId, decodePhotoId, encodeAlbumId } from "~/utils/sqids"
 import { and, eq, inArray } from "drizzle-orm"
@@ -36,6 +36,9 @@ export interface AlbumApi {
   getAlbumsByGroup(groupId: number): Promise<AlbumWithPhotosSchemaType[]>
   isGroupMember(userId: string, groupId: number): Promise<boolean>
   canUserAccessAlbum(userId: string, albumId: string): Promise<boolean>
+  createGroup(groupName: string): Promise<{ createdGroupId: number }>
+  addUserToGroup(groupId: number, userId: string): Promise<void>
+  getAlbum(albumId: string): Promise<{ album: AlbumSchemaType, photos: PhotoSchemaType[] } | null>
   createAlbum(groupId: number, albumData: unknown): Promise<{ createdAlbumId: string }>
   updateAlbum(albumId: string, updateData: unknown): Promise<void>
   deleteAlbum(albumId: string): Promise<void>
@@ -112,6 +115,34 @@ export function createAlbumApi(context: AppLoadContext) {
         .where(and(eq(schemas.user.id, userId), eq(schemas.albums.id, decodedAlbumId)))
 
       return result.length !== 0
+    },
+
+    async createGroup(groupName: string) {
+      const [ result ] = await context.db.insert(schemas.groups).values({ name: groupName }).returning({ createdGroupId: schemas.groups.id })
+
+      return result
+    },
+
+    async addUserToGroup(groupId: number, userId: string) {
+      await context.db.insert(schemas.usersToGroups).values({ userId, groupId })
+    },
+
+    async getAlbum(albumId: string) {
+      const decodedAlbumId = decodeAlbumId(albumId)
+      const albumWithPhotos = await context.db.query.albums.findFirst({
+        where: (t, { eq }) => eq(t.id, decodedAlbumId),
+        with: { photos: true }
+      })
+
+      if (albumWithPhotos === undefined) {
+        return null
+      }
+
+      const { photos, ...album } = v.parse(AlbumWithPhotosSchema, albumWithPhotos)
+
+      return {
+        album, photos
+      }
     },
 
     async createAlbum(groupId: number, albumData: unknown) {

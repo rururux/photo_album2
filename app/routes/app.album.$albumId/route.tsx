@@ -1,4 +1,3 @@
-import { decodeAlbumId } from "~/utils/sqids"
 import type { Route } from "./+types/route"
 import { Header } from "~/components/Header"
 import { IconButton } from "~/components/IconButton"
@@ -21,7 +20,6 @@ import { useRangeCalendar } from "~/components/RangeCalendar/hooks"
 import { AlbumInfo } from "./components/AlbumInfo"
 import { PhotoGridList } from "./components/PhotoGridList"
 import * as v from "valibot"
-import { AlbumWithPhotosSchema } from "~/schemas/album"
 import { Menu } from "~/components/Menu"
 import { Dialog } from "~/components/Dialog"
 import { useCloseWatcher } from "~/hooks/useCloseWatcher"
@@ -46,21 +44,13 @@ export async function loader({ request, params, context }: Route.LoaderArgs) {
     }
   }
 
-  const decodedAlbumId = decodeAlbumId(params.albumId)
-  const albumWithPhotos = await context.db.query.albums.findFirst({
-    where: (t, { eq }) => eq(t.id, decodedAlbumId),
-    with: { photos: true }
-  })
+  const albumWithPhotos = await context.albumApi.getAlbum(params.albumId)
 
-  if (albumWithPhotos === undefined) {
+  if (albumWithPhotos === null) {
     throw redirect("/app/home")
   }
 
-  const { photos, ...album } = v.parse(AlbumWithPhotosSchema, albumWithPhotos)
-
-  return {
-    album, photos
-  }
+  return albumWithPhotos
 }
 
 export async function action({ request, params: { albumId }, context }: Route.ActionArgs) {

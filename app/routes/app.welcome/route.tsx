@@ -1,6 +1,5 @@
 import { redirect, useFetcher } from "react-router"
 import type { Route } from "./+types/route"
-import schemas from "workers/lib/db/schema"
 import { GroupListItem } from "./components/GroupListItem"
 import { Header } from "~/components/Header"
 import { useRef } from "react"
@@ -52,9 +51,9 @@ export async function action({ request, context }: Route.ActionArgs) {
       }
 
       if (parseResult.output.action === "createGroup") {
-        const [ newGroup ] = await context.db.insert(schemas.groups).values({ name: parseResult.output.name }).returning()
+        const { createdGroupId } = await albumApi.createGroup(parseResult.output.name)
 
-        await context.db.insert(schemas.usersToGroups).values({ userId: session.user.id, groupId: newGroup.id })
+        await albumApi.addUserToGroup(createdGroupId, session.user.id)
       } else if (parseResult.output.action === "setDefaultGroup") {
         const newDefaultGroupId = parseResult.output.groupId
         const isGroupMember = await albumApi.isGroupMember(session.user.id, newDefaultGroupId)
