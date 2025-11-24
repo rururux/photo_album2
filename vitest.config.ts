@@ -4,13 +4,22 @@ import tsconfigPaths from "vite-tsconfig-paths"
 
 export default defineConfig({
   test: {
-    browser: {
-      enabled: true,
-      provider: playwright(),
-      instances: [
-        { browser: "chromium", setupFiles: "./test/setup.ts" },
-      ],
-    }
+    projects: [
+      {
+        extends: true,
+        test: {
+          include: [ "app/**/route.client.test.tsx" ],
+          browser: {
+            enabled: true,
+            provider: playwright(),
+            instances: [
+              { browser: "chromium", setupFiles: "./test/setup.ts" },
+            ],
+            connectTimeout: 10000,
+          },
+        }
+      }
+    ]
   },
   plugins: [
     tsconfigPaths()

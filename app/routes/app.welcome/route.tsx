@@ -17,9 +17,9 @@ export async function loader({ request, context }: Route.LoaderArgs) {
   const session = await context.auth.api.getSession({ headers: request.headers })
 
   if (!session) {
-    return redirect("/login")
+    throw redirect("/login")
   } else if (typeof session.user.defaultGroup === "number") {
-    return redirect("/app/home")
+    throw redirect("/app/home")
   }
 
   const groups = await context.albumApi.getGroupsByUser(session.user.id)

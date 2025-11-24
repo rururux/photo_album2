@@ -4,7 +4,7 @@ import schemas from "workers/lib/db/schema"
 import { user } from "workers/lib/db/schema/authSchema"
 
 const UserBaseSchema = createSelectSchema(user)
-const UserClientSchema = v.pick(UserBaseSchema, [ "id", "name", "image" ])
+export const UserClientSchema = v.pick(UserBaseSchema, [ "id", "name", "image" ])
 
 export const UserSchema = v.pipe(
   UserBaseSchema,
