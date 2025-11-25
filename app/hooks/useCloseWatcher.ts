@@ -17,6 +17,7 @@ export function useCloseWatcher({ enabled, onCancel = noop, onClose }: UseCloseW
 
   useEffect(() => {
     if (!enabled) return
+    if (typeof CloseWatcher === "undefined") return
 
     const abortController = new AbortController()
     const closeWatcher = new CloseWatcher({ signal: abortController.signal })
